@@ -1,0 +1,1 @@
+export const center :string = 'flex justify-center items-center flex-row border'
