@@ -1,37 +1,89 @@
-import Ionicons from '@expo/vector-icons/Ionicons';
-import { Box, Button, ButtonText, SafeAreaView, ScrollView, Text } from '@gluestack-ui/themed';
-import { StyleSheet, Image, Platform, View, TextInput } from 'react-native';
+import { Box, Button, ButtonText, SafeAreaView, ScrollView, Text, VStack } from '@gluestack-ui/themed';
+import { Image, TextInput, View } from 'react-native';
 
-import tw from "twrnc";
-import { createArray } from '../../constants/Utils';
-import { category as CATEGORY } from '../../constants/META';
 import { useEffect, useState } from 'react';
-import ShopItem from '../../components/Shop/ShopItem';
+import tw from "twrnc";
+import { category as CATEGORY } from '../../constants/META';
+import { filterObject } from '../../constants/Utils';
+import { Platform } from 'react-native';
+import { Dimensions } from 'react-native';
+
+const windowDimensions = Dimensions.get('window');
+const screenDimensions = Dimensions.get('screen');
 
 export default function Shop() {
   const [PRODUCTS, setPRODUCTS] = useState([])
   const [sortBy, setSortBy] = useState('none')
-  const [Search, setSearch] = useState()
+  const [Search, setSearch] = useState('')
   const [category, setCategory] = useState('All')
+  const OS = (Platform.OS)
 
-  /*  useEffect(() => {
-     const getData = async () => {
-       //fetch products from stripe
-       const data = await fetchAllProducts(null, 100)
-       //filter Products by if they have metadata, is active and has images
-       //then sets PRODUCT state to the result
-       setPRODUCTS(Object.values(
-         filterObject(data, (v) => {
-           return (Object.keys(v.metadata).length > 0) && (v.active) && (v.images.length > 0)
-         })
-       ))
-     }
- 
-     // getData()
- 
- 
- 
-   }, []) */
+
+  const [dimensions, setDimensions] = useState({
+    window: windowDimensions,
+    screen: screenDimensions,
+  });
+  const [screenSize, setScreenSize] = useState('')
+  useEffect(() => {
+    const subscription = Dimensions.addEventListener(
+      'change',
+      ({ window, screen }) => {
+        setDimensions({ window, screen });
+        const screenWidth = window.width
+        console.log(screenWidth, screenSize)
+        if (screenWidth <= 767)
+          setScreenSize('SM')
+        if (screenWidth >= 768 && screenWidth <= 1023) setScreenSize('MD')
+
+        if (screenWidth >= 1024 && screenWidth <= 1279) setScreenSize('LG')
+
+        if (screenWidth >= 1280)
+          setScreenSize('XL')
+
+      },
+    );
+    return () => subscription?.remove();
+  }, []);
+
+
+
+  useEffect(() => {
+    const getData = async () => {
+      //fetch products from stripe
+      try {
+        let data = await fetch(Platform.OS != 'web' ? 'http://192.168.1.153:8081/fetchProducts' : 'http://localhost:8081/fetchProducts',
+          {
+            method: "POST",
+            mode: "cors",
+            cache: "no-cache",
+            credentials: "same-origin",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            redirect: "follow",
+            referrerPolicy: "no-referrer",
+            body: JSON.stringify('data'),
+          }
+        )
+        data = await data.json()
+        setPRODUCTS(Object.values(
+          filterObject(data, (v) => {
+            return (Object.keys(v.metadata).length > 0) && (v.active) && (v.images.length > 0)
+          })
+        ))
+      } catch (error) {
+        console.log(error.message)
+      }
+
+    }
+
+    getData()
+
+
+
+  }, [])
+
+
 
   const sortList = ['A-Z', 'Z-A', '$-$$$', '$$$-$', 'Newest', 'Most Popular']
   const filterProducts = () => {
@@ -77,19 +129,23 @@ export default function Shop() {
     }
 
     if (Search != '') result = (result.filter(product => {
-      for (let index = 0; index < Search.split(' ').length; index++) {
+      for (let index = 0; index < Search?.split(' ').length; index++) {
 
         if (product.metadata.tags?.toUpperCase().split(',').includes(Search.toUpperCase().split(' ')[index])) return true
       }
 
       return false
     }))
-    return (category != 'All') ? result.filter(item => item.metadata.category == category) : result
+
+    return (category != 'All') ?
+      result.filter(item => item.metadata.category == category) : result
   }
 
 
+
+
   return (
-    <View style={tw`flex  h-full overflow-hidden text-white bg-black`}>
+    <View style={tw`flex ${OS == 'web' ? `${screenSize == 'SM' ? 'px-2' : screenSize == 'MD' ? 'px-20' : screenSize == 'LG' ? 'px-50' : screenSize == 'XL' ? 'px-72' : 'px-96'}` : 'px-2'}  h-full overflow-hidden text-white bg-black`}>
       <SafeAreaView>
         <View style={tw` w-full  bg-black-900  z-40 top-0`}>
           <ScrollView horizontal style={tw`relative mt-14   flex-row    gap-8 p-2  m-auto`}>
@@ -97,7 +153,7 @@ export default function Shop() {
               return (
                 <Button onPress={() => { setCategory(category == _category ? 'All' : _category) }} key={_category} style={tw`items-center justify-center flex-col  rounded-full h-auto hover:scale-105 scale-100 m-2 w-16 bg-transparent text-white`}>
                   <View style={tw`h-16 w-16  overflow-hidden  rounded-full ${category == _category ? 'border-4 border-red-700' : 'border-2'}`}>
-                    <Image style={tw`h-full w-full object-cover`} source={{
+                    <Image style={tw`h-full w-full `} source={{
                       uri:
                         _category == 'Drinks' ? 'https://images.unsplash.com/photo-1624552184280-9e9631bbeee9?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' :
                           _category == 'Candy' ? 'https://images.unsplash.com/photo-1621939514649-280e2ee25f60?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' :
@@ -116,7 +172,7 @@ export default function Shop() {
             <View style={tw`w-3/4 m-auto flex-row items-center justify-center flex-wrap gap-2 p-2`}>
               {sortList.map(i => {
                 return (
-                  <Button onPress={() => { setSortBy(sortBy == i ? 'none' : i) }} style={tw`w-28 bg-gray-900 h-8 text-white border-black p-2 ${sortBy == i ? 'bg-yellow-500' : ''}`}>{
+                  <Button key={i} onPress={() => { setSortBy(sortBy == i ? 'none' : i) }} style={tw`w-28 bg-gray-900 h-8 text-white border-black p-2 ${sortBy == i ? 'bg-yellow-500' : ''}`}>{
                     <ButtonText style={tw`text-center`}>{i}</ButtonText>
                   }</Button>
                 )
@@ -131,13 +187,28 @@ export default function Shop() {
           </View>
         </View>
 
-        <View style={tw`  relative mt-[20rem] md:mt-72 mb-20  h-auto w-full lg:w-3/4 p-2 mx-auto`}>
-          <View style={tw`flex-row flex-wrap  gap-4 `}>
-            {filterProducts().map(product => {
-              return (<View key={product}></View>)
+        <ScrollView style={tw`relative  mb-20  h-auto w-full lg:w-3/4 p-2 mx-auto`}>
+          <View style={tw`flex-row flex-wrap p-2 mb-96 gap-4 `}>
+            {(filterProducts() || PRODUCTS).map((product, index) => {
+              return (
+                <View
+                  style={tw` border border-gray-800 overflow-hidden  bg-black m-auto ${OS == 'web' ? 'w-42 h-62' : 'w-32 h-52'} p-2 rounded-xl`}
+                  key={index}
+                >
+
+                  <VStack>
+                    <Box style={tw` overflow-hidden border rounded-lg h-3/4`}>
+                      <Image style={tw`${OS == 'web' ? 'h-32' : 'h-full'}  w-full`} source={{ uri: product.images[0] }} />
+                    </Box>
+                    <VStack style={tw`${OS == 'web' ? 'h-16 ' : 'h-1/3'}`}>
+                      <Text style={tw`text-white text-center  h-10`}>{product.name.substring(0, (OS == 'web' ? 20 : 15))}{product.name.length > 20 ? '...' : ''}</Text>
+                      <Text style={tw`text-white text-center h-8`}>${product.metadata.price}</Text>
+                    </VStack>
+                  </VStack>
+                </View>)
             })}
           </View>
-        </View>
+        </ScrollView>
 
       </SafeAreaView>
 

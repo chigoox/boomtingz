@@ -1,9 +1,7 @@
 import { AntDesign, Entypo } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
 import React from 'react';
-import { View } from 'react-native';
 
-import tw  from 'twrnc';
 
 export default function TabLayout() {
 

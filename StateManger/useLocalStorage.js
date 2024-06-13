@@ -1,7 +1,5 @@
+import { addToDocumentCollection, fetchDocument } from '@/constants/Utils';
 import { useEffect } from 'react';
-import { useAUTHListener } from './AUTHListener';
-import { getInitCart } from './CartReducer';
-import { addToDocumentCollection, fetchDocument } from '@/constants/Utils'
 
 function useLocalStorage(state, dispatch, initialCartState) {
     //const user = useAUTHListener()
