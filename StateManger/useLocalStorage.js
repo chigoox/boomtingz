@@ -1,41 +1,36 @@
 import { addToDocumentCollection, fetchDocument } from '@/constants/Utils';
-import { useEffect } from 'react';
+import { auth } from '@/firebaseConfig';
+import useFetchData from '@/hooks/useFetchData';
+import useSetDocument from '@/hooks/useSetDocument';
+import { useEffect, useState } from 'react';
 
 function useLocalStorage(state, dispatch, initialCartState) {
     //const user = useAUTHListener()
 
-    const user = undefined
-
+    const user = auth?.currentUser
+    const userData = user?.uid ? useFetchData('User', user?.uid) : { cart: { lineItems: [], total: 0 } }
     const getInitCart = async () => {
-        const userData = user?.uid ? await fetchDocument('User', user?.uid) : { cart: { state: { lineItems: [] } } }
-        console.log(userData)
-        return { lineItems: userData.cart.state.lineItems, total: userData.cart.state.total } || []
+        if (userData)
+            return { lineItems: userData?.cart?.lineItems, total: userData?.cart?.total } || []
     }
 
+    //checking if there already is a state in localstorage
 
 
     useEffect(() => {
-        //checking if there already is a state in localstorage
-        const run = async () => {
-            const databaseCart = await getInitCart()
-            /*  if (databaseCart || JSON.parse(localStorage.getItem("Cart"))) {
-                 //if yes, update the current state with the stored one
-                 dispatch({
-                     type: "SAVE_CART",
-                     value: { lineItems: databaseCart.lineItems, total: databaseCart.total } || JSON.parse(localStorage.getItem("Cart")),
-                 });
-             } */
-        }
+        const getData = async () => {
+            const cart = await getInitCart()
 
-        if (user) run()
-    }, [user]);
+            // getData()
+
+        }, [])
+
+
 
     useEffect(() => {
         if (state !== initialCartState) {
             //localStorage.setItem("Cart", JSON.stringify(state));
-            if (user.uid || user.gid) addToDocumentCollection('User', user?.uid ? user?.uid : user?.gid, 'cart', { state })
-
-
+            if (user?.uid || user?.gid) useSetDocument('Users', user?.uid ? user?.uid : user?.gid, { cart: { ...state } })
 
             //create and/or set a new localstorage variable called "state"
         }

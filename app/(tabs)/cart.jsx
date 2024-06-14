@@ -1,20 +1,20 @@
 
-import { fetchDocument } from '../../constants/Utils'
+import { AntDesign, Ionicons } from '@expo/vector-icons';
+import { Button, ButtonText, Card, Center, HStack, Image, SafeAreaView, ScrollView, Text, VStack, View } from "@gluestack-ui/themed";
 import { useEffect, useState } from "react";
-import { Button, View } from "@gluestack-ui/themed";
 import tw from "twrnc";
-import Loading from '../../components/Loading.jsx'
-import { useCartContext } from '../../StateManger/CartConext.jsx'
 import useAUTHListener from '../../StateManger/AUTHListener.jsx';
-import { Ionicons, AntDesign } from '@expo/vector-icons';
-import { Text } from '@gluestack-ui/themed';
+import { useCartContext } from '../../StateManger/CartConext.jsx';
+import Loading from '../../components/Loading.jsx';
+import { fetchDocument, getRandNum } from '../../constants/Utils';
+import ItemQTYButton from '../../components/Shop/ItemQTYButton.jsx';
 
 
-const Trash2Icon = <Ionicons name='trash' />
+const Trash2Icon = <Ionicons name='trash' color={'red'} />
 const AiOutlineClose = <AntDesign name='outline-close' />
 
-function Cart({ showCart, setShowCart }) {
-
+function Cart() {
+    const showCart = ''
     const { state, dispatch } = useCartContext()
     const { lineItems, total } = state
     const user = useAUTHListener()
@@ -99,58 +99,64 @@ function Cart({ showCart, setShowCart }) {
 
     }, [showCart])
 
-
+    const mock = { a: 1, b: 2, c: 3, q: 2, f: 3, j: 2, z: 9, }
     return (
-        <View
-            style={tw`fixed z-[999] border-l border-dashed border-opacity-50 border-gray-400  md:top-0 top-0 trans  right-0 ${showCart ? 'w-[50vw] md:w-[25vw] p-2' : 'w-[0] P-0 overflow-hidden'} h-[100vh] bg-black-800 text-white bg-opacity-50`}>
-            {isLoading && <Loading />}
+        <View h={'$full'} bgColor='$black'>
+            <SafeAreaView h={'$full'}>
+                <Center
+                    style={tw` border  border-dashed border-opacity-50 border-gray-400  md:top-0 top-0 trans  right-0 p-2  h-full w-full bg-black text-white `}>
+                    {isLoading && <Loading />}
 
-            <View style={tw`center gap-2`}>
-                <Text style={tw`${showCart ? '' : 'left-20 relative'}  text-center text-2xl font-bold`}>Cart</Text>
-                {Object.values(lineItems).map(item => {
-                    return (
-                        <View key={item.priceId + getRand()} style={tw`h-52 md:h-48  flex-shrink-0 border-b-2 border-gray-700  relative`}>
-                            <View style={tw`evenly gap-2 relative h-1/2 top-4`}>
-                                <Card shadow="true" style={tw`w-24 h-full relative bg-black overflow-hidden`}>
-                                    <Image fill src={item.images ? item.images[0] : ''} alt="" />
+                    <Text style={tw`text-center mt-8 text-green-600 text-2xl font-bold`}>Cart</Text>
+                    <ScrollView $sm-w={'$full'} $md-w={'$3/4'} $lg-w={'$1/2'} style={tw`overflow-x-hidden border border-yellow-400 min-w-90 p-4 h-30  gap-2`}>
+                        {Object.values(lineItems).map(item => {
+                            return (
+                                <View key={item.priceId + getRandNum()} style={tw`h-32  border-b-2 border-gray-700  relative`}>
+                                    <HStack style={tw`gap-2 items-center justify-center  relative h-1/2 top-4 p-2`}>
+                                        <Card style={tw`w-20 h-24 border border-gray-700 border-dashed relative bg-black overflow-hidden`}>
+                                            <Image source={{ uri: item.images ? item.images[0] : '' }} alt="" />
 
-                                </Card>
-                                <View style={tw`p-1  w-1/2`}>
-                                    <Text style={tw`md:text-lg`}>{item.name?.substr(0, 20)}{item?.name?.length > 20 ? '...' : ''}</Text>
-                                    {item?.variant && <Text style={tw`font-light text-xs h-4 overflow-hidden`}>{item?.variant}</Text>}
-                                    <Text style={tw`font-bold`}>{String(item?.price).includes('$') ? '' : '$'}{item?.price}</Text>
+                                        </Card>
+                                        <View style={tw`p-1  w-1/3`}>
+                                            <Text style={tw`text-white`}>{item.name?.substr(0, 20)}{item?.name?.length > 20 ? '...' : '' || 'hello world'}</Text>
+                                            {item?.variant || true && <Text style={tw`font-light text-gray-400 text-xs h-4 overflow-hidden`}>{item?.variant || 'test'}</Text>}
+                                            <Text style={tw`font-bold  text-white`}>{String(item?.price).includes('$') ? '' : '$'}{item?.price || 200}</Text>
+                                        </View>
+
+
+                                        <View style={tw`text-black  w-1/3`}>
+                                            <ItemQTYButton size={'sm'} product={item} forCart={true} />
+                                        </View>
+                                    </HStack>
+                                    <Button onPress={() => { RemoveFromCart(item) }} style={tw`h-6 mb-2  rounded-t-md font-semibold w-24  center text-red-500 bg-gray-600 m-auto bottom-0 `}>
+                                        {Trash2Icon}
+                                    </Button>
                                 </View>
+                            )
+                        })}
+
+                    </ScrollView >
+                    <View style={tw`relative mt-2 `}>
+                        <VStack style={tw` justify-center items-center `}>
+                            <HStack space='lg' style={tw`flex w-full mb-2`}>
+                                <Text >Total</Text>
+                                <Text style={tw`font-extrabold text-white`}>${total}</Text>
+                            </HStack>
 
 
-                            </View>
-                            <View style={tw`text-black mt-8`}>
-                                {/*  <ItemQTYButton product={item} forCart={true} /> */}
-                            </View>
-                            <Button onPress={() => { RemoveFromCart(item) }} style={tw`h-6 mb-2 rounded-t-md font-semibold w-24  center text-red-500 bg-gray-600 m-auto bottom-0 `}>
-                                <Trash2Icon />
+                            <Button onPress={(event) => {
+                                checkShippingInfo(event)
+
+                            }} style={tw` h-12 text-center font-bold rounded`}>
+                                <ButtonText>CheckOut</ButtonText>
                             </Button>
-                        </View>
-                    )
-                })}
 
-            </View >
-            <View style={tw`center-col relative bottom-4 text-white`}>
-                <View style={tw`${showCart ? 'scale-1' : 'scale-0'} trans-slow evenly w-full `}>
-                    <Text >Total</Text>
-                    <Text style={tw`font-extrabold`}>${total}</Text>
-                </View>
+                        </VStack>
+                    </View>
 
-
-                <Button onPress={(event) => {
-                    checkShippingInfo(event)
-
-                }} style={tw`w-3/4 h-12 bg-blue-700 font-bold rounded hover:text-lg trans`}>
-                    <Text>CheckOut</Text>
-                </Button>
-
-            </View>
-
-        </View >
+                </Center>
+            </SafeAreaView>
+        </View>
     )
 }
 

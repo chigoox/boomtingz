@@ -13,7 +13,6 @@ export const CartReducer = (state, action) => {
    const actionPrice = action?.value?.price * actionQTY
 
 
-
    switch (action.type) {
       case "SAVE_CART": {
          return action.value
@@ -43,7 +42,7 @@ export const CartReducer = (state, action) => {
       case "REMOVE_FROM_CART": {
          return {
             ...state,
-            lineItems: filterObject(state.lineItems, items => { console.log(items); return (items != action.value) }),
+            lineItems: filterObject(state.lineItems, items => { return (items != action.value) }),
             total: state.total - actionPrice
          };
       }

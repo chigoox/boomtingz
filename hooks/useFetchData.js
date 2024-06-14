@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { data as db } from '../firebaseConfig';
 
 
-const useFetchData = (collection, document, listen) => {
+const useFetchData = async (collection, document, listen) => {
 
     const [data, setData] = useState()
 

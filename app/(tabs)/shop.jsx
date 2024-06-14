@@ -1,4 +1,4 @@
-import { Box, Button, ButtonText, SafeAreaView, ScrollView, Text, VStack } from '@gluestack-ui/themed';
+import { Box, Button, ButtonText, Center, Link, SafeAreaView, ScrollView, Text, VStack } from '@gluestack-ui/themed';
 import { Image, TextInput, View } from 'react-native';
 
 import { useEffect, useState } from 'react';
@@ -7,6 +7,8 @@ import { category as CATEGORY } from '../../constants/META';
 import { filterObject } from '../../constants/Utils';
 import { Platform } from 'react-native';
 import { Dimensions } from 'react-native';
+import ProductView from '../../components/Shop/ProductView';
+
 
 const windowDimensions = Dimensions.get('window');
 const screenDimensions = Dimensions.get('screen');
@@ -17,13 +19,13 @@ export default function Shop() {
   const [Search, setSearch] = useState('')
   const [category, setCategory] = useState('All')
   const OS = (Platform.OS)
-
+  const [selectedProduct, setSelectedProduct] = useState(false)
 
   const [dimensions, setDimensions] = useState({
     window: windowDimensions,
     screen: screenDimensions,
   });
-  const [screenSize, setScreenSize] = useState('')
+  const [screenSize, setScreenSize] = useState('SM')
   useEffect(() => {
     const subscription = Dimensions.addEventListener(
       'change',
@@ -31,9 +33,9 @@ export default function Shop() {
         setDimensions({ window, screen });
         const screenWidth = window.width
         console.log(screenWidth, screenSize)
-        if (screenWidth <= 767)
+        if (screenWidth <= 640)
           setScreenSize('SM')
-        if (screenWidth >= 768 && screenWidth <= 1023) setScreenSize('MD')
+        if (screenWidth >= 641 && screenWidth <= 1023) setScreenSize('MD')
 
         if (screenWidth >= 1024 && screenWidth <= 1279) setScreenSize('LG')
 
@@ -147,8 +149,9 @@ export default function Shop() {
   return (
     <View style={tw`flex ${OS == 'web' ? `${screenSize == 'SM' ? 'px-2' : screenSize == 'MD' ? 'px-20' : screenSize == 'LG' ? 'px-50' : screenSize == 'XL' ? 'px-72' : 'px-96'}` : 'px-2'}  h-full overflow-hidden text-white bg-black`}>
       <SafeAreaView>
-        <View style={tw` w-full  bg-black-900  z-40 top-0`}>
-          <ScrollView horizontal style={tw`relative mt-14   flex-row    gap-8 p-2  m-auto`}>
+        <ProductView product={selectedProduct} setShowProductView={setSelectedProduct} showProductView={selectedProduct} />
+        <Box style={tw` w-full  bg-black-900  z-40 top-0`}>
+          <ScrollView horizontal style={tw`relative mt-14 ${screenSize == 'SM' ? 'w-full' : 'w-3/4'}  flex-row    gap-8 p-2  m-auto`}>
             {CATEGORY.map(_category => {
               return (
                 <Button onPress={() => { setCategory(category == _category ? 'All' : _category) }} key={_category} style={tw`items-center justify-center flex-col  rounded-full h-auto hover:scale-105 scale-100 m-2 w-16 bg-transparent text-white`}>
@@ -185,27 +188,30 @@ export default function Shop() {
             <TextInput onChangeText={(v) => { setSearch(v) }} type='text' style={tw`h-12 w-full px-2 bg-white`} placeholder='Search' />
 
           </View>
-        </View>
+        </Box>
 
-        <ScrollView style={tw`relative  mb-20  h-auto w-full lg:w-3/4 p-2 mx-auto`}>
+        <ScrollView style={tw`relative  mb-20 max-h-screen   ${screenSize == 'SM' ? 'h-120' : screenSize == 'MD' ? 'h-190' : screenSize == 'LG' ? 'h-190' : screenSize == 'XL' ? 'h-190' : 'h-96'} w-full lg:w-3/4 p-2 mx-auto`}>
           <View style={tw`flex-row flex-wrap p-2 mb-96 gap-4 `}>
             {(filterProducts() || PRODUCTS).map((product, index) => {
               return (
-                <View
-                  style={tw` border border-gray-800 overflow-hidden  bg-black m-auto ${OS == 'web' ? 'w-42 h-62' : 'w-32 h-52'} p-2 rounded-xl`}
+                <Button
+                  onPress={() => { setSelectedProduct(product) }}
+                  style={tw` border border-gray-800 overflow-hidden  bg-black m-auto ${OS == 'web' ? 'w-42 h-auto' : 'w-32 h-52'} p-2 rounded-xl`}
                   key={index}
                 >
 
                   <VStack>
-                    <Box style={tw` overflow-hidden border rounded-lg h-3/4`}>
-                      <Image style={tw`${OS == 'web' ? 'h-32' : 'h-full'}  w-full`} source={{ uri: product.images[0] }} />
+                    <Box style={tw`w-42 overflow-hidden border border-white rounded-lg h-3/4`}>
+                      <Image style={tw`${OS == 'web' ? 'h-50 w-full' : 'h-full'}  w-full`} source={{ uri: product.images[0] }} />
                     </Box>
-                    <VStack style={tw`${OS == 'web' ? 'h-16 ' : 'h-1/3'}`}>
-                      <Text style={tw`text-white text-center  h-10`}>{product.name.substring(0, (OS == 'web' ? 20 : 15))}{product.name.length > 20 ? '...' : ''}</Text>
-                      <Text style={tw`text-white text-center h-8`}>${product.metadata.price}</Text>
+                    <VStack style={tw`${OS == 'web' ? 'h-16 ' : 'h-1/3'} w-full `}>
+                      <Center style={tw`h-10  mt-4`}>
+                        <Text style={tw`text-white text-center w-32  h-10`}>{product.name.substring(0, (OS == 'web' ? 20 : 15))}{product.name.length > 20 ? '...' : ''}</Text>
+                        <Text style={tw`text-white text-center h-8`}>${product.metadata.price}</Text>
+                      </Center>
                     </VStack>
                   </VStack>
-                </View>)
+                </Button>)
             })}
           </View>
         </ScrollView>
