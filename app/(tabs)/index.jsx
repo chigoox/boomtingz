@@ -21,6 +21,7 @@ import tw from 'twrnc';
 import Settings from '@/components/User/Settings'
 import { signOut } from 'firebase/auth';
 import { router } from 'expo-router';
+import { useCartContext } from '@/StateManger/CartConext';
 
 
 const { formatNumber, createArray } = new UtilClass
@@ -47,6 +48,14 @@ export default function HomeScreen({ }) {
     await signOut()
     router.replace('/signUp')
   }
+
+
+
+
+
+
+
+
 
 
   return (
