@@ -1,7 +1,9 @@
 import { doc, getDoc, onSnapshot } from "firebase/firestore";
+import { data as db } from '../firebaseConfig';
 
-export const fecthDoc = async (collection, document, listen) => {
+const fetchDoc = async (collection, document, listen) => {
     const documentRef = doc(db, collection, document)
+
 
     if (listen) {
         onSnapshot(documentRef, (doc) => {
@@ -10,10 +12,9 @@ export const fecthDoc = async (collection, document, listen) => {
     }
 
     const snapShot = await getDoc(documentRef)
-
     if (snapShot.exists) {
-        return (snapShot.data())
         console.log('data:', snapShot.data())
+        return (snapShot.data())
     }
     else {
         return ('No such document!')
@@ -21,3 +22,5 @@ export const fecthDoc = async (collection, document, listen) => {
 
 
 }
+
+export default fetchDoc

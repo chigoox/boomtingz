@@ -20,7 +20,7 @@ export const ProductView = ({ product, showProductView, setShowProductView, refD
 
     const [itemToCheckOut, setItemToCheckOut] = useState({})
 
-    useEffect(() => { setItemToCheckOut({ priceID: product?.default_price, Qty: 0, images: images, name: name }) }, [product])
+    useEffect(() => { setItemToCheckOut({ priceID: product?.default_price, Qty: 0, images: images, name: name, price: price }) }, [product])
 
     const canAddToCart = () => {
         return (itemToCheckOut.inventory >= 1) ? true : true
@@ -70,7 +70,7 @@ export const ProductView = ({ product, showProductView, setShowProductView, refD
 
                     </ScrollView>
                 </ModalBody>
-                <ModalFooter style={tw`border border-white rounded-b-lg b bg-black`}>
+                <ModalFooter style={tw`border border-white rounded-b-lg  bg-black`}>
                     <HStack w={'$full'} space='md' alignItems='center' justifyContent='space-around'>
                         <Button
                             variant="outline"

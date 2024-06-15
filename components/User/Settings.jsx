@@ -80,7 +80,7 @@ export const Settings = ({ showSettings, setShowSettings, name, avatar, uid, ref
                                 <AntDesign size={32} color={'white'} name='camera' />
                                 <ButtonText>Upload Avatar</ButtonText>
                             </VStack>
-                            <Image style={tw`w-32 object-cover h-32`} source={selectedImage} alt='proile' />
+                            <Image style={tw`w-32 h-32`} source={selectedImage} alt='proile' />
 
                         </Button>
                         <VStack space="xs">

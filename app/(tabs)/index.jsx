@@ -31,7 +31,7 @@ const { formatNumber, createArray } = new UtilClass
 export default function HomeScreen({ }) {
   //check if logged in if not push to loginScreen
   const [showSettings, setShowSettings] = useState(false)
-  const user = useCheckSignedIn()
+  const user = useCheckSignedIn(true)
   const uid = user?.uid
   const [userData, setUserData] = useState()
   useFetchData('Users', uid, setUserData)
@@ -75,6 +75,7 @@ export default function HomeScreen({ }) {
               <Avatar style={tw`border-4 border-gray-300`} size='2xl'>
                 <AvatarFallbackText>{name}</AvatarFallbackText>
                 <AvatarImage
+                  alt='AI'
                   source={{
                     uri: avatar || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8dXNlcnxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=800&q=60",
                   }}

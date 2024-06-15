@@ -16,7 +16,7 @@ const CarouselStack = ({ slides }) => {
                     <ScrollView horizontal style={tw`w-full m-auto p-2`}>
                         <HStack space="md">
                             {slides.map(image => <Button onPress={() => { setSelectedImage(image) }} style={tw`h-20 w-20 m-auto p-0 overflow-hidden rounded-xl shadow shadow-black`}>
-                                <Image source={{ uri: image }} style={tw`h-20 w-20`} alt={'product Img'} />
+                                <Image key={image} source={{ uri: image }} style={tw`h-20 w-20`} alt={'product Img'} />
                             </Button>)}
                         </HStack>
                     </ScrollView>

@@ -5,5 +5,4 @@ const { default: UtilClass } = require("codeby5/Support/UtilsClass");
 
 export const { auth, data } = new FireClass(firebaseConfig)
 export const { createArray, formatNumber, getRandNum, filterObject } = new UtilClass
-export const { addToDocumentCollection, fetchDocument, updateDocumentCollection, updateDocumentCollectionArrayItem } = data
 export const { checkCurrentUser, loginWith } = auth
