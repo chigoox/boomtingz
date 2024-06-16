@@ -1,6 +1,7 @@
 import { AntDesign, Entypo } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
 import React from 'react';
+import { Platform } from 'react-native';
 
 
 export default function TabLayout() {
@@ -34,7 +35,7 @@ export default function TabLayout() {
         }}
       />
        <Tabs.Screen
-        name="cart"
+        name={"cart"}
         options={{
           title: 'Cart',
           tabBarIcon: ({ color, focused }) => (

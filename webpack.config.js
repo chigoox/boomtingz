@@ -2,10 +2,10 @@
 const createExpoWebpackConfigAsync = require('@expo/webpack-config');
 
 module.exports = async function (env, argv) {
-	const config = await createExpoWebpackConfigAsync(env, argv);
-	// Customize the config before returning it.
-	config.resolve.alias["@stripe/stripe-react-native"] = "null-loader"; // ADD THIS LINE
-	return config;
+  const config = await createExpoWebpackConfigAsync(env, argv);
+  // Customize the config before returning it.
+  config.resolve.alias["@stripe/stripe-react-native"] = "null-loader"; // ADD THIS LINE
+  return config;
 };
 
 module: {
@@ -17,6 +17,6 @@ module: {
       exclude: [/react-native-web/, /\.(native|ios|android)\.(ts|js)x?$/],
       loader: 'babel-loader'
     },
-  
+
   ]
 }

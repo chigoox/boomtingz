@@ -1,15 +1,14 @@
 
 import useCheckSignedIn from '@/hooks/useCheckSignedIn';
-import { AntDesign, Ionicons } from '@expo/vector-icons';
-import { Button, ButtonText, Card, Center, HStack, Image, SafeAreaView, ScrollView, Text, VStack, View } from "@gluestack-ui/themed";
+import { AntDesign } from '@expo/vector-icons';
+import { Center, HStack, SafeAreaView, ScrollView, Text, VStack, View } from "@gluestack-ui/themed";
 import { useEffect, useState } from "react";
 import tw from "twrnc";
 import { useCartContext } from '../../StateManger/CartConext.jsx';
-import Loading from '../../components/Loading.jsx';
-import ItemQTYButton from '../../components/Shop/ItemQTYButton.jsx';
-import { getRandNum } from '../../constants/Utils';
-import useSetDocument from '../../hooks/useSetDocument.js';
 import CartItem from '../../components/Cart/CartItem.jsx';
+import CheckoutScreen from '../../components/Cart/CheckoutScreen';
+import Loading from '../../components/Loading.jsx';
+import useSetDocument from '../../hooks/useSetDocument.js';
 
 const AiOutlineClose = <AntDesign name='outline-close' />
 
@@ -28,7 +27,6 @@ function Cart() {
         delete i.category
         return i
     })
-
 
 
     const [getShippingWindow, setGetShippingWindow] = useState(false)
@@ -124,12 +122,7 @@ function Cart() {
                             </HStack>
 
 
-                            <Button onPress={(event) => {
-                                checkShippingInfo(event)
-
-                            }} style={tw`bg-green-700 h-12 text-center font-bold rounded`}>
-                                <ButtonText>CheckOut</ButtonText>
-                            </Button>
+                            <CheckoutScreen cart={state} styles={`bg-green-700 h-12 text-center font-bold rounded`} />
 
                         </VStack>
                     </View>

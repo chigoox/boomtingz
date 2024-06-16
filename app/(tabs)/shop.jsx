@@ -33,7 +33,6 @@ export default function Shop() {
       ({ window, screen }) => {
         setDimensions({ window, screen });
         const screenWidth = window.width
-        console.log(screenWidth, screenSize)
         if (screenWidth <= 640)
           setScreenSize('SM')
         if (screenWidth >= 641 && screenWidth <= 1023) setScreenSize('MD')
