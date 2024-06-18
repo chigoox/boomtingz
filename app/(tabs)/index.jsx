@@ -92,11 +92,13 @@ export default function HomeScreen({ }) {
           </View>
           <Text style={tw`w-3/4 font-bold text-center border-b border-white`}>Rate: {rate} Points per 1$ spend</Text>
         </Center>
+
         <Center style={tw`p-4`}>
           {userData && <Card style={tw`h-52  w-auto bg-[#333333] p-4`}>
             <Center>
               <Heading color='white'>Past Orders</Heading>
             </Center>
+
             <ScrollView style={``}>
               <Center>
                 {createArray(20).map(i => (
@@ -119,6 +121,7 @@ export default function HomeScreen({ }) {
             </ScrollView>
 
           </Card>}
+
           <Card style={tw`mt-4 h-auto bg-yellow-400`}>
             <View style={tw`flex-row gap-2 my-2`}>
               <Button style={tw`h-12 bg-white`} bgColor='green' borderColor='black'>
@@ -132,14 +135,12 @@ export default function HomeScreen({ }) {
           </Card>
         </Center>
 
-
-
         <Center>
-
           <Button onPress={() => { setShowSettings(true) }} ref={ref} bg='$black'>
             <ButtonText>Setting</ButtonText>
             <ButtonIcon as={EditIcon} />
           </Button>
+
           <Button onPress={logOut} bg='$black'>
             <ButtonText>SignOut</ButtonText>
             <ButtonIcon as={ArrowLeftIcon} />

@@ -9,6 +9,8 @@ import { addToDocumentCollection } from '../constants/Utils';
 import { router } from 'expo-router';
 import { doc, setDoc } from 'firebase/firestore';
 import { View } from 'react-native';
+import { Image } from '@gluestack-ui/themed';
+import Logo from '../components/Logo';
 
 
 
@@ -70,9 +72,12 @@ export default function SignUp() {
     }
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <Center style={tw`bg-yellow-500 h-full`}>
+            <Center style={tw`bg-yellow-500 relative h-full`}>
                 <KeyboardAvoidingView
                     behavior={Platform.OS === 'ios' ? 'padding' : 'height'} >
+                    <View style={tw`absolute -top-10 left-0 h-40  w-[15rem]`}>
+                        <Logo />
+                    </View>
                     <FormControl
                         p="$4"
                         borderWidth="$1"

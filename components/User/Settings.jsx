@@ -63,7 +63,7 @@ export const Settings = ({ showSettings, setShowSettings, name, avatar, uid, ref
             onClose={() => {
                 setShowSettings(false)
             }}
-            finalFocusRef={refDom}
+
         >
             <ModalBackdrop />
             <ModalContent>

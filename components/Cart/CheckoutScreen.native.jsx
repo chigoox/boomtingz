@@ -1,9 +1,11 @@
 import { ButtonText, Button } from "@gluestack-ui/themed";
 import axios from "axios";
+import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { Alert } from "react-native";
 import { Platform } from "react-native";
 import tw from "twrnc";
+import { siteName } from "../../constants/META";
 
 let StripeProvider;
 let useStripe;
@@ -13,22 +15,28 @@ if (Platform.OS !== 'web') {
 }
 
 
-export default function CheckoutScreen({ styles, cart }) {
+export default function CheckoutScreen({ styles, cart, UID, setIsLoading }) {
     const { initPaymentSheet, presentPaymentSheet } = useStripe();
     const [loading, setLoading] = useState(false);
-    console.log(cart)
     const fetchPaymentSheetParams = async () => {
-        const { data } = await axios.post(`${Platform.OS != 'web' ? 'http://192.168.1.153:8081/checkout' : 'http://localhost:8081/checkout'}`,
-            {
-                cart: cart,
-                location: 'mobile'
-            },
-            {
-                headers: {
-                    "Content-Type": "application/json",
+        try {
+            const { data } = await axios.post(`${Platform.OS != 'web' ? 'http://192.168.1.153:8081/checkout' : 'http://localhost:8081/checkout'}`,
+                {
+                    cart: cart,
+                    location: 'mobile',
+                    UID: UID
+
                 },
-            }
-        );
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                }
+            );
+        } catch (error) {
+            console.log(error.message)
+            setIsLoading(false)
+        }
         const { paymentIntent, ephemeralKey, customer } = data;
 
         return {
@@ -39,6 +47,7 @@ export default function CheckoutScreen({ styles, cart }) {
     };
 
     const initializePaymentSheet = async () => {
+        setIsLoading(true)
         const {
             paymentIntent,
             ephemeralKey,
@@ -47,7 +56,8 @@ export default function CheckoutScreen({ styles, cart }) {
         } = await fetchPaymentSheetParams();
 
         const { error } = await initPaymentSheet({
-            merchantDisplayName: "Example, Inc.",
+            merchantDisplayName: siteName,
+            returnURL: __DEV__ ? 'http://localhost:8081:/orderSucess' : 'https://boomtingz.com/orderSucess',
             customerId: customer,
             customerEphemeralKeySecret: ephemeralKey,
             paymentIntentClientSecret: paymentIntent,
@@ -64,18 +74,21 @@ export default function CheckoutScreen({ styles, cart }) {
     };
 
     const openPaymentSheet = async () => {
+
         const { error } = await presentPaymentSheet();
 
         if (error) {
             Alert.alert(`Error code: ${error.code}`, error.message);
         } else {
             Alert.alert('Success', 'Your order is confirmed!');
+            router.push('/orderSuccess')
         }
+        setIsLoading(false)
     };
 
 
     useEffect(() => {
-        initializePaymentSheet();
+        ;
     }, []);
 
     return (
@@ -92,7 +105,7 @@ export default function CheckoutScreen({ styles, cart }) {
                 style={tw`${styles} `}
                 variant="primary"
                 title="Checkout"
-                onPress={() => { openPaymentSheet() }}
+                onPress={async () => { await initializePaymentSheet(); await openPaymentSheet() }}
             >
                 <ButtonText>CheckOut</ButtonText>
             </Button>

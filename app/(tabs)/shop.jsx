@@ -176,6 +176,7 @@ export default function Shop() {
                 })}
               </HStack>
             </ScrollView>
+
             <View>
               <View style={tw`w-3/4 m-auto flex-row items-center justify-center flex-wrap gap-2 p-2`}>
                 {sortList.map(i => {
@@ -189,6 +190,7 @@ export default function Shop() {
                 )}
               </View>
             </View>
+
             <View style={tw`p-2 flex-row items-center justify-center text-black`}>
               <Input style={tw`h-12 rounded-full w-full text-black px-2 bg-white`}>
                 <InputSlot>
@@ -196,7 +198,6 @@ export default function Shop() {
                 </InputSlot>
                 <InputField placeholderTextColor={'black'} onChangeText={(v) => { setSearch(v) }} type='text' style={tw``} placeholder='Search' />
               </Input>
-
             </View>
           </Box>
 
@@ -224,12 +225,7 @@ export default function Shop() {
               })}
             </View>
           </ScrollView>
-
         </SafeAreaView>
-
-
-
-
       </View>
     </TouchableWithoutFeedback>
   )

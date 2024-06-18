@@ -1,24 +1,32 @@
 import { Button, ButtonText } from "@gluestack-ui/themed";
+import axios from "axios";
 import tw from "twrnc";
 
 
 
 
-export default function CheckoutScreen({ styles, cart }) {
+export default function CheckoutScreen({ styles, cart, UID, setIsLoading }) {
     checkout = async () => {
-        const { data } = await axios.post('/api/checkout',
-            {
-                cart: cart,
-                location: 'web'
+        setIsLoading(true)
+        try {
+            const { data } = await axios.post('/checkout',
+                {
+                    cart: cart,
+                    location: 'web',
+                    UID: UID
 
-            },
-            {
-                headers: {
-                    "Content-Type": "application/json",
                 },
-            }
-        );
-        window.location.assign(data)
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                }
+            );
+            window.location.assign(data)
+        } catch (error) {
+            console.error(error.message)
+            setIsLoading(false)
+        }
     }
     return (
 
@@ -27,7 +35,7 @@ export default function CheckoutScreen({ styles, cart }) {
             variant="primary"
             disabled={false}
             title="Checkout"
-            onPress={() => { }}
+            onPress={checkout}
         >
             <ButtonText>CheckOut</ButtonText>
         </Button>
