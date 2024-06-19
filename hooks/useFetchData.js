@@ -1,5 +1,3 @@
-import { auth } from '@/firebaseConfig';
-import { router } from 'expo-router';
 import { doc, getDoc, onSnapshot } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 import { data as db } from '../firebaseConfig';

@@ -1,6 +1,6 @@
 import { storage } from '@/firebaseConfig'
 import { AntDesign } from '@expo/vector-icons'
-import { Button, ButtonText, CloseIcon, Heading, Icon, Input, InputField, Modal, ModalBackdrop, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, Text, VStack } from '@gluestack-ui/themed'
+import { Button, ButtonText, CloseIcon, Heading, Icon, Input, InputField, Modal, ModalBackdrop, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, Text, VStack, View } from '@gluestack-ui/themed'
 import * as ImagePicker from 'expo-image-picker'
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
 import React, { useRef, useState } from 'react'
@@ -93,6 +93,11 @@ export const Settings = ({ showSettings, setShowSettings, name, avatar, uid, ref
                         </VStack>
 
                     </VStack>
+                    <View>
+                        <Text style={tw`font-bold text-center`}>
+                            {uid}
+                        </Text>
+                    </View>
                 </ModalBody>
                 <ModalFooter>
                     <Button

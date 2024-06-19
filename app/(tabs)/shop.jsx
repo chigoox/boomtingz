@@ -9,7 +9,7 @@ import { Platform } from 'react-native';
 import { Dimensions } from 'react-native';
 import ProductView from '../../components/Shop/ProductView';
 import { TouchableWithoutFeedback } from 'react-native';
-
+import Logo from '../../components/Logo'
 
 const windowDimensions = Dimensions.get('window');
 const screenDimensions = Dimensions.get('screen');
@@ -53,7 +53,7 @@ export default function Shop() {
     const getData = async () => {
       //fetch products from stripe
       try {
-        let data = await fetch(Platform.OS != 'web' ? 'http://192.168.1.153:8081/fetchProducts' : 'http://localhost:8081/fetchProducts',
+        let data = await fetch('/fetchProducts',
           {
             method: "POST",
             mode: "cors",
@@ -87,7 +87,7 @@ export default function Shop() {
 
 
 
-  const sortList = ['A-Z', 'Z-A', '$-$$$', '$$$-$', 'Newest', 'Most Popular']
+  const sortList = ['A-Z', 'Z-A', '$-$$$', '$$$-$', 'Newest', 'Popular']
   const filterProducts = () => {
     let result = []
     switch (sortBy) {
@@ -150,6 +150,7 @@ export default function Shop() {
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={tw`flex ${OS == 'web' ? `${screenSize == 'SM' ? 'px-2' : screenSize == 'MD' ? 'px-20' : screenSize == 'LG' ? 'px-50' : screenSize == 'XL' ? 'px-72' : 'px-96'}` : 'px-2'}  h-full overflow-hidden text-white bg-black`}>
         <SafeAreaView>
+          <Logo size={'sm'} />
           <ProductView product={selectedProduct} setShowProductView={setSelectedProduct} showProductView={selectedProduct} />
           <Box style={tw` w-full    z-40 top-0`}>
             <ScrollView horizontal style={tw`relative mt-14 ${screenSize == 'SM' ? 'w-full' : 'w-3/4'}    m-auto`}>
@@ -181,7 +182,7 @@ export default function Shop() {
               <View style={tw`w-3/4 m-auto flex-row items-center justify-center flex-wrap gap-2 p-2`}>
                 {sortList.map(i => {
                   return (
-                    <Button key={i} onPress={() => { setSortBy(sortBy == i ? 'none' : i) }} style={tw`w-28 bg-gray-900 h-8 text-white border-black p-2 ${sortBy == i ? 'bg-yellow-500' : ''}`}>{
+                    <Button key={i} onPress={() => { setSortBy(sortBy == i ? 'none' : i) }} style={tw`w-20 bg-gray-900 h-8 text-white border-black p-2 ${sortBy == i ? 'bg-yellow-500' : ''}`}>{
                       <ButtonText style={tw`text-center`}>{i}</ButtonText>
                     }</Button>
                   )

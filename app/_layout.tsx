@@ -31,6 +31,7 @@ export default function RootLayout() {
 <GluestackUIProvider config={config}>
       <Stack>
         <Stack.Screen name="signUp" options={{ headerShown: false }} />
+        <Stack.Screen name="admin" options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="+not-found" />
       </Stack>

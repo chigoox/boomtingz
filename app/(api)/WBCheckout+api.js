@@ -1,10 +1,11 @@
-import { orderNumberPrefix } from "@/app/META";
-import { FetchTheseDocs, addToDatabase, addToDoc, deleteDocument, fetchDocument, fetchInOrder, updateDatabaseItem } from "@/app/myCodes/Database";
-import { format } from "date-fns";
-import { serverTimestamp } from "firebase/firestore";
+import { deleteDoc, doc, serverTimestamp } from "firebase/firestore";
 import Cors from "micro-cors";
-import { headers } from "next/headers";
-import { NextResponse } from "next/server";
+import { useFetchDocs } from "../../hooks/useFetchDocs";
+import useSetDocument from "../../hooks/useSetDocument";
+import { data as db } from "../../firebaseConfig";
+import { orderNumberPrefix } from "../../constants/META";
+
+
 
 const stripe = require("stripe")(process.env.STRIPE_PRIVATE);
 
@@ -12,23 +13,25 @@ const cors = Cors({
     allowMethods: ["POST", "HEAD"],
 });
 
-const secret = process.env.STRIPE_WEBHOOK_KEY || "";
+const secret = 'whsec_54088d65e838c6a950fea91d163ee3b3d77328f523414be51057a80ebc1615de';
 
 export async function POST(request) {
     try {
         const body = await request.text();
-        const signature = headers().get("stripe-signature");
+        const signature = request.headers.get("stripe-signature");
         const event = stripe.webhooks.constructEvent(body, signature, secret);
-
-        if (event.type === "checkout.session.completed" || "payment_intent.succeeded") {
+        if (event.type === "checkout.session.completed" || "payment_intent.succeeded" || 'charge.succeeded') {
             const { type } = event.data.object.metadata
 
             if (type == 'checkout') {
-                const { uid, cart, total, cartID, } = event.data.object.metadata
-                const { orderID } = await fetchDocument('Admin', 'Orders')
-                const { ShippingInfo } = await fetchDocument('User', uid)
+                const { uid, cartID, } = event.data.object.metadata
+                const { orderID } = await useFethData('Admin', 'IDs')
+                const { name, email, exp, expToLv, level, loyaltyPoints } = await useFetchData('Users', uid)
+                const PTRate = 4 * level / 100
 
-                const CART = await FetchTheseDocs('Carts', 'cartID', '==', cartID, 'cartID') //Object.values(JSON.parse(fullCart))
+
+
+                const CART = await useFetchDocs('Carts', 'cartID', '==', cartID, 'time') //Object.values(JSON.parse(fullCart))
                 const CurrentOrder = Object.values(CART[0].cart)
 
                 //const cart = CurrentOrder?.lineItems ? CurrentOrder?.lineItems : {}
@@ -63,10 +66,13 @@ export async function POST(request) {
                 const arrayImages = await getArrayToAddImages()
                 const orderQTY = addArray(arrayQTY)
                 const orderPrice = addArray(arrayPrice)
-
+                console.log('first')
                 const order = {
-                    orderInfo: ShippingInfo,
-                    orderedItems: CurrentOrder,//CurrentOrder.lineItems,
+                    userInfo: {
+                        name: name,
+                        email: email
+                    },
+                    orderedItems: CART[0].cart,
                     id: `${orderNumberPrefix}-${orderID}`,
                     qty: orderQTY,
                     total: orderPrice,
@@ -77,29 +83,37 @@ export async function POST(request) {
                     dateServer: serverTimestamp(),
                     dateReal: new Date().toLocaleString()
                 }
-                ''
 
                 const ORDERID = order.id
-                await addToDoc('Orders', ORDERID, order)
+                await useSetDocument('Orders', ORDERID, order)
 
-                const ORDERS = await FetchTheseDocs('Orders', 'id', '==', ORDERID, 'id') //Object.values(JSON.parse(fullCart))
+                const ORDERS = await useFetchDocs('Orders', 'id', '==', ORDERID, 'id') //Object.values(JSON.parse(fullCart))
 
                 if (ORDERS[0].id == ORDERID) {
 
-                    await updateDatabaseItem('Admin', 'Orders', 'orderID', orderID + 1)
+                    await useSetDocument('Admin', 'Orders', {
+                        orderID: orderID + 1
+                    })
                 }
 
-                await addToDatabase('User', uid, 'currentOrder', ORDERID)
+                //await useSetDocument('User', uid, {currentOrder: ORDERID})
+                console.log(order)
+                const gainedXP = orderPrice
+                let expCarry = (exp + gainedXP) - expToLv
+                expCarry = expCarry < 0 ? 0 : expCarry
 
+                useSetDocument('Users', uid, {
+                    loyaltyPoints: loyaltyPoints + orderPrice * PTRate,
+                    exp: expCarry > 0 ? expCarry : exp + gainedXP,
+                    level: expCarry > 0 ? level + 1 : level,
+                    expToLv: expToLv + 25
 
-                await deleteDocument('Carts', cartID)
+                })
+                await deleteDoc(doc(db, 'Carts', cartID))
 
             }
 
-            if (type == 'medical') {
-                const { formData } = event.data.object.metadata
 
-            }
 
 
         }

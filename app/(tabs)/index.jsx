@@ -22,7 +22,8 @@ import Settings from '@/components/User/Settings'
 import { signOut } from 'firebase/auth';
 import { router } from 'expo-router';
 import { useCartContext } from '@/StateManger/CartConext';
-
+import { AntDesign, Ionicons } from '@expo/vector-icons';
+import QR from '@/components/User/QR'
 
 const { formatNumber, createArray } = new UtilClass
 
@@ -40,6 +41,7 @@ export default function HomeScreen({ }) {
   const level = userData?.level
   const loyaltyPoints = userData?.loyaltyPoints
   const avatar = userData?.avatar
+  const role = userData?.role
   const name = userData?.name
   const rate = 4 * level / 100
   const ref = useRef(null)
@@ -75,9 +77,9 @@ export default function HomeScreen({ }) {
               <Avatar style={tw`border-4 border-gray-300`} size='2xl'>
                 <AvatarFallbackText>{name}</AvatarFallbackText>
                 <AvatarImage
-                  alt='AI'
+                  alt={name}
                   source={{
-                    uri: avatar || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8dXNlcnxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=800&q=60",
+                    uri: avatar,
                   }}
                 />
               </Avatar>
@@ -103,7 +105,7 @@ export default function HomeScreen({ }) {
               <Center>
                 {createArray(20).map(i => (
                   <HStack key={i} space='md' style={tw` items-center p-4 my-2`}>
-                    <Image style={tw`h-12  w-12 rounded-full`} source={{
+                    <Image alt={i} style={tw`h-12  w-12 rounded-full`} source={{
                       uri: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8dXNlcnxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=800&q=60",
                     }} />
                     <VStack space='sm'>
@@ -134,17 +136,25 @@ export default function HomeScreen({ }) {
 
           </Card>
         </Center>
+        <Center style={tw`gap-2 bordermb-40`}>
+          <QR valueQR={uid} />
+          <HStack>
+            <Button style={tw`h-8`} gap={'$2'} onPress={() => { setShowSettings(true) }} ref={ref} bg='$red'>
+              <ButtonIcon as={EditIcon} />
+              <ButtonText>Setting</ButtonText>
+            </Button>
 
-        <Center>
-          <Button onPress={() => { setShowSettings(true) }} ref={ref} bg='$black'>
-            <ButtonText>Setting</ButtonText>
-            <ButtonIcon as={EditIcon} />
-          </Button>
+            <Button style={tw`h-8`} gap={'$2'} onPress={logOut} bg='$black'>
+              <AntDesign size={20} color={'white'} name='logout' />
+              <ButtonText>SignOut</ButtonText>
+            </Button>
+          </HStack>
 
-          <Button onPress={logOut} bg='$black'>
-            <ButtonText>SignOut</ButtonText>
-            <ButtonIcon as={ArrowLeftIcon} />
-          </Button>
+          {role == 'Admin' && <Button gap={'$2'} onPress={() => { router.push('/admin') }} bg='$black'>
+            <Ionicons color={'white'} size={20} name='key' />
+            <ButtonText>Admin</ButtonText>
+          </Button>}
+
         </Center>
       </SafeAreaView>
     </View>

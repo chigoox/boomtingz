@@ -6,6 +6,8 @@ import { Alert } from "react-native";
 import { Platform } from "react-native";
 import tw from "twrnc";
 import { siteName } from "../../constants/META";
+import { deleteDoc, doc } from "firebase/firestore";
+import { data as db } from "../../firebaseConfig";
 
 let StripeProvider;
 let useStripe;
@@ -18,6 +20,7 @@ if (Platform.OS !== 'web') {
 export default function CheckoutScreen({ styles, cart, UID, setIsLoading }) {
     const { initPaymentSheet, presentPaymentSheet } = useStripe();
     const [loading, setLoading] = useState(false);
+    const [cartID, setCartID] = useState()
     const fetchPaymentSheetParams = async () => {
         try {
             const { data } = await axios.post(`${Platform.OS != 'web' ? 'http://192.168.1.153:8081/checkout' : 'http://localhost:8081/checkout'}`,
@@ -33,17 +36,21 @@ export default function CheckoutScreen({ styles, cart, UID, setIsLoading }) {
                     },
                 }
             );
+
+            const { paymentIntent, ephemeralKey, customer, cartID } = data;
+            setCartID(cartID)
+
+            return {
+                paymentIntent,
+                ephemeralKey,
+                customer,
+                cartID,
+            };
         } catch (error) {
             console.log(error.message)
             setIsLoading(false)
         }
-        const { paymentIntent, ephemeralKey, customer } = data;
 
-        return {
-            paymentIntent,
-            ephemeralKey,
-            customer,
-        };
     };
 
     const initializePaymentSheet = async () => {
@@ -53,6 +60,7 @@ export default function CheckoutScreen({ styles, cart, UID, setIsLoading }) {
             ephemeralKey,
             customer,
             publishableKey,
+            cartID,
         } = await fetchPaymentSheetParams();
 
         const { error } = await initPaymentSheet({
@@ -71,13 +79,16 @@ export default function CheckoutScreen({ styles, cart, UID, setIsLoading }) {
         if (!error) {
             setLoading(true);
         }
+        await openPaymentSheet(cartID)
     };
 
-    const openPaymentSheet = async () => {
 
+    const openPaymentSheet = async (cartID) => {
+        console.log(cartID)
         const { error } = await presentPaymentSheet();
 
         if (error) {
+            deleteDoc(doc(db, 'Carts', cartID))
             Alert.alert(`Error code: ${error.code}`, error.message);
         } else {
             Alert.alert('Success', 'Your order is confirmed!');
@@ -105,7 +116,7 @@ export default function CheckoutScreen({ styles, cart, UID, setIsLoading }) {
                 style={tw`${styles} `}
                 variant="primary"
                 title="Checkout"
-                onPress={async () => { await initializePaymentSheet(); await openPaymentSheet() }}
+                onPress={async () => { await initializePaymentSheet() }}
             >
                 <ButtonText>CheckOut</ButtonText>
             </Button>

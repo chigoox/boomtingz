@@ -1,7 +1,7 @@
 import { doc, setDoc } from 'firebase/firestore';
 import { data as db } from '../firebaseConfig';
 
-const useSetDocument = (collection, document, data) => {
+const useSetDocument = async (collection, document, data) => {
     const setData = async () => {
         if (!collection || !document || !data) return
         try {

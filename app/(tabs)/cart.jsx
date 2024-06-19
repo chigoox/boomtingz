@@ -1,6 +1,5 @@
 
 import useCheckSignedIn from '@/hooks/useCheckSignedIn';
-import { AntDesign } from '@expo/vector-icons';
 import { Center, HStack, SafeAreaView, ScrollView, Text, VStack, View } from "@gluestack-ui/themed";
 import { useEffect, useState } from "react";
 import tw from "twrnc";
@@ -10,7 +9,6 @@ import CheckoutScreen from '../../components/Cart/CheckoutScreen';
 import Loading from '../../components/Loading.jsx';
 import useSetDocument from '../../hooks/useSetDocument.js';
 
-const AiOutlineClose = <AntDesign name='outline-close' />
 
 function Cart() {
     const { state } = useCartContext()
@@ -27,7 +25,7 @@ function Cart() {
 
     //updates cart in database
     useEffect(() => {
-        if (UID && state) useSetDocument('User', UID, state)
+        if (UID && state) useSetDocument('Users', UID, state)
     }, [lineItems])
 
 
