@@ -22,7 +22,6 @@ function ShopItem({ shopItems, location = 'HotTools', onShopPage }) {
     }
 
     const toggleQuickView = () => {
-        console.log(shopItems)
         if (ShowQuickView == false) return setShowQuickView(shopItems)
         setShowQuickView(false)
     }

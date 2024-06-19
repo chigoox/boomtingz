@@ -144,7 +144,6 @@ export default function Shop() {
   }
 
 
-  console.log(filterProducts())
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>

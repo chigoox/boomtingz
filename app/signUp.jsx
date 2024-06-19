@@ -30,7 +30,6 @@ export default function SignUp() {
     const createAccount = async () => {
         if (loginInfo.password != loginInfo.passwordMatch) return
         try {
-            console.log('trying...')
             const { user } = await createUserWithEmailAndPassword(auth, loginInfo.email, loginInfo.password)
             await sendEmailVerification(user)
             const UID = user.uid

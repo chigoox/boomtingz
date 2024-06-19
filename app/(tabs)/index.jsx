@@ -1,7 +1,9 @@
+import QR from '@/components/User/QR';
+import Settings from '@/components/User/Settings';
 import useCheckSignedIn from '@/hooks/useCheckSignedIn';
 import useFetchData from '@/hooks/useFetchData';
+import { AntDesign, Ionicons } from '@expo/vector-icons';
 import {
-  ArrowLeftIcon,
   Avatar, AvatarFallbackText,
   AvatarImage, Button, ButtonIcon, ButtonText,
   Card,
@@ -9,21 +11,21 @@ import {
   EditIcon,
   HStack,
   Heading,
+  Progress,
+  ProgressFilledTrack,
   ScrollView,
   Text,
   VStack
 } from '@gluestack-ui/themed';
 import UtilClass from 'codeby5/Support/UtilsClass';
-import { useRef, useState } from 'react';
+import { router } from 'expo-router';
+import { signOut } from 'firebase/auth';
+import { useEffect, useRef, useState } from 'react';
 import { Image, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import tw from 'twrnc';
-import Settings from '@/components/User/Settings'
-import { signOut } from 'firebase/auth';
-import { router } from 'expo-router';
-import { useCartContext } from '@/StateManger/CartConext';
-import { AntDesign, Ionicons } from '@expo/vector-icons';
-import QR from '@/components/User/QR'
+import useFetchDocs from '@/hooks/useFetchDocs'
+import { auth } from '@/firebaseConfig';
 
 const { formatNumber, createArray } = new UtilClass
 
@@ -35,7 +37,18 @@ export default function HomeScreen({ }) {
   const user = useCheckSignedIn(true)
   const uid = user?.uid
   const [userData, setUserData] = useState()
+  const [orders, setOrders] = useState()
+
   useFetchData('Users', uid, setUserData)
+  useEffect(() => {
+    const run = async () => {
+      const data = await useFetchDocs('Orders', 'user', '==', uid, 'dateServer')
+      setOrders(data)
+    }
+    run()
+
+  }, [uid])
+
   const exp = userData?.exp
   const expToLv = userData?.expToLv
   const level = userData?.level
@@ -47,9 +60,10 @@ export default function HomeScreen({ }) {
   const ref = useRef(null)
 
   const logOut = async () => {
-    await signOut()
+    await signOut(auth)
     router.replace('/signUp')
   }
+
 
 
 
@@ -89,6 +103,9 @@ export default function HomeScreen({ }) {
                   <Text color='yellow' bold size="md">Lv: {level}</Text>
                   <Text color='green' bold size='md'>Points: {formatNumber(loyaltyPoints)}</Text>
                 </HStack>
+                <Progress value={(exp / expToLv) * 100} my={'$2'} w="$full" h="$2" size="sm">
+                  <ProgressFilledTrack bg="$amber600" />
+                </Progress>
               </VStack>
             </HStack>
           </View>
@@ -103,17 +120,17 @@ export default function HomeScreen({ }) {
 
             <ScrollView style={``}>
               <Center>
-                {createArray(20).map(i => (
-                  <HStack key={i} space='md' style={tw` items-center p-4 my-2`}>
-                    <Image alt={i} style={tw`h-12  w-12 rounded-full`} source={{
-                      uri: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8dXNlcnxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=800&q=60",
+                {orders?.map(order => (
+                  <HStack key={order.id} space='md' style={tw` items-center p-4 my-2`}>
+                    <Image alt={order.id} style={tw`h-12  w-12 rounded-full`} source={{
+                      uri: order?.images ? order?.images[0] : 'https://images.unsplash.com/photo-1511556820780-d912e42b4980?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
                     }} />
                     <VStack space='sm'>
-                      <Text color='white'>Item Name</Text>
-                      <Text color='white'>Item Price</Text>
+                      <Text color='white'>{order?.id}</Text>
+                      <Text color='white'>{order?.total}</Text>
                     </VStack>
                     <View>
-                      <Text color='yello'>+{formatNumber(9539)}</Text>
+                      <Text color='yello'>+{formatNumber(order?.loyaltyPoints)}</Text>
                     </View>
 
                   </HStack>
@@ -136,7 +153,7 @@ export default function HomeScreen({ }) {
 
           </Card>
         </Center>
-        <Center style={tw`gap-2 bordermb-40`}>
+        <Center style={tw`gap-2 border mb-40`}>
           <QR valueQR={uid} />
           <HStack>
             <Button style={tw`h-8`} gap={'$2'} onPress={() => { setShowSettings(true) }} ref={ref} bg='$red'>

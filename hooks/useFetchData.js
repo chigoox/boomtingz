@@ -22,7 +22,6 @@ const useFetchData = async (collection, document, listen) => {
 
         if (snapShot.exists) {
             setData(snapShot.data())
-            console.log('data:', snapShot.data())
         }
         else {
             setData('No such document!')

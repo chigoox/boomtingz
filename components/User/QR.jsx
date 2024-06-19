@@ -30,7 +30,7 @@ const QR = ({ valueQR }) => {
                             <Text style={tw`bg-black text-white my-2 rounded text-xl text-center`}>{valueQR}</Text>
                             <Center>
                                 <QRCode
-                                    size={320}
+                                    size={250}
                                     color='green'
                                     backgroundColor='white'
                                     value={valueQR}

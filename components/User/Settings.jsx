@@ -23,13 +23,12 @@ export const Settings = ({ showSettings, setShowSettings, name, avatar, uid, ref
             setSettingsInfo((o) => ({ ...o, avatar: result.assets[0]?.uri }))
             setSelectedImage(result.assets[0]?.uri);
         } else {
-            console.log('You did not select any image.');
+            // console.log('You did not select any image.');
         }
     };
 
     const uriToBlob = async (uri) => {
         const response = await fetch(uri);
-        console.log(' 22')
         const blob = await response.blob();
         return blob;
     };
@@ -41,7 +40,7 @@ export const Settings = ({ showSettings, setShowSettings, name, avatar, uid, ref
             const snapshot = await uploadBytes(storageRef, blob);
 
             const downloadURL = await getDownloadURL(snapshot.ref);
-            console.log('File available at:', downloadURL);
+            //console.log('File available at:', downloadURL);
 
             return downloadURL;
         } catch (error) {
@@ -68,7 +67,7 @@ export const Settings = ({ showSettings, setShowSettings, name, avatar, uid, ref
             <ModalBackdrop />
             <ModalContent>
                 <ModalHeader>
-                    <Heading size="lg">Settng</Heading>
+                    <Heading size="lg">Settings</Heading>
                     <ModalCloseButton>
                         <Icon as={CloseIcon} />
                     </ModalCloseButton>

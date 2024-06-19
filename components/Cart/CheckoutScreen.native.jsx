@@ -84,7 +84,6 @@ export default function CheckoutScreen({ styles, cart, UID, setIsLoading }) {
 
 
     const openPaymentSheet = async (cartID) => {
-        console.log(cartID)
         const { error } = await presentPaymentSheet();
 
         if (error) {

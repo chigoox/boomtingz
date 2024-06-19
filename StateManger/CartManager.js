@@ -11,7 +11,6 @@ function CartManager(state, dispatch, initialCartState) {
         const getCart = async () => {
             onAuthStateChanged(auth, async (user) => {
                 if (!user) return
-                console.log(state)
                 const data = await fetchDoc('Users', user.uid)
                 const { cart } = data
                 if (Object.keys(state.lineItems).length == 0 && Object.keys(cart.lineItems).length >= 1)
@@ -27,7 +26,10 @@ function CartManager(state, dispatch, initialCartState) {
 
             getCart()
 
-        } else { console.log(Object.keys(state.lineItems)) }
+        } else {
+            //  console.log(Object.keys(state.lineItems)) 
+
+        }
     }, [])
 
 

@@ -27,14 +27,12 @@ function Admin() {
     const [hasPermission, setHasPermission] = useState(null);
     const [scanned, setScanned] = useState(false);
 
-    useEffect(() => {
-        const getCameraPermissions = async () => {
-            const { status } = await Camera.requestCameraPermissionsAsync();
-            setHasPermission(status === "granted");
-        };
+    const getCameraPermissions = async () => {
+        const { status } = await Camera.requestCameraPermissionsAsync();
+        setHasPermission(status === "granted");
+    };
 
-        getCameraPermissions();
-    }, []);
+
 
     const handleBarCodeScanned = ({ type, data }) => {
         setScanned(true);
@@ -52,7 +50,7 @@ function Admin() {
     const formPoints = Math.floor(formData.points)
     const level = Math.floor(userData?.level) || 0
     const exp = Math.floor(userData?.exp) || 0
-    const expToLv = Math.floor(userData?.expToLv)
+    const expToLv = Math.floor(userData?.expToLv) || 0
     const rate = (4 * level) / 100
 
     const [showModal, setShowModal] = useState(false)
@@ -63,22 +61,21 @@ function Admin() {
     const managePoints = async () => {
         setShowModal(true)
 
-        const gainedXP = formPoints
-        let expCarry = (exp + gainedXP) - expToLv
-        expCarry = expCarry < 0 ? 0 : expCarry
-        const carryLvs = Number(expCarry / 100)
+        const gainedXP = formPoints;
+        let expCarry = (exp + gainedXP) - expToLv;
+        expCarry = expCarry < 0 ? 0 : expCarry;
+        const carryLvs = Math.floor(expCarry / expToLv);
 
 
 
-        if (PointType == 'issue')
+        if (PointType == 'issue') {
             await useSetDocument('Users', formData.uid, {
                 loyaltyPoints: Number(points + (formPoints * rate)),
-                exp: expCarry > 0 ? expCarry : carryLvs >= 2 ? exp + (expCarry - carryLvs * 100) : exp + gainedXP,
-                level: expCarry > 0 ? carryLvs >= 2 ? level + carryLvs : level + 1 : level,
-                expToLv: expCarry > 0 ? expToLv + (25 * (carryLvs >= 2 ? carryLvs : 1)) : expToLv
+                exp: expCarry > 0 ? expCarry % expToLv : exp + gainedXP,
+                level: level >= 100 ? 100 : level + (expCarry > 0 ? carryLvs + 1 : 0),
+                expToLv: expToLv + (25 * (carryLvs + 1))
             })
-
-        if (PointType == 'redeem' && points - formData.points >= 0) {
+        } else if (PointType == 'redeem' && points - formData.points >= 0) {
             await useSetDocument('Users', formData.uid, {
                 loyaltyPoints: Number(points - formPoints),
             })
@@ -94,7 +91,7 @@ function Admin() {
         <View style={'bg-black h-full'}  >
             <SafeAreaView style={tw`h-full bg-black`}>
                 <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-                    <Button style={tw`rounded-none`} onPress={() => router.back()}>
+                    <Button style={tw`rounded-none bg-green-500 `} onPress={() => router.back()}>
                         <Ionicons name='caret-back' size={24} color={'white'} />
                         <ButtonText>Go back</ButtonText>
                     </Button>
@@ -127,14 +124,14 @@ function Admin() {
                                             <VStack>
                                                 <VStack space=''>
                                                     <Text style={tw`text-2xl text-white font-bold`}>{name}</Text>
+                                                    <Text style={tw`text-white mb-2`}>{email}</Text>
                                                     <HStack space='lg' style={tw`font-bold`}>
-                                                        <Text style={tw`text-white font-bold`}>Lv: {formatNumber(level)}</Text>
-                                                        <Text style={tw`text-white font-bold`}>Pt: {formatNumber(Number(points))}</Text>
-                                                        <Text style={tw`text-white font-bold`}>NX: {formatNumber(Number(exp))} / {formatNumber(Number(expToLv))}</Text>
+                                                        <Text style={tw`text-white bg-green-700 rounded-full p-2 font-bold`}>Lv: {formatNumber(level)}</Text>
+                                                        <Text style={tw`text-white bg-green-700 rounded-full p-2 font-bold`}>Pt: {formatNumber(Number(points))}</Text>
+                                                        <Text style={tw`text-white bg-green-700 rounded-full p-2 font-bold`}>NX: {formatNumber(Number(exp))} / {formatNumber(Number(expToLv))}</Text>
                                                     </HStack>
                                                 </VStack>
-                                                <Text style={tw`text-white`}>{email}</Text>
-                                                <Progress value={(exp / expToLv) * 100} w="$full" h="$2" size="sm">
+                                                <Progress value={(exp / expToLv) * 100} my={'$2'} w="$full" h="$2" size="sm">
                                                     <ProgressFilledTrack bg="$amber600" />
                                                 </Progress>
 
@@ -146,7 +143,7 @@ function Admin() {
                                         <VStack style={tw`border-white  w-full items-center justify-center gap-4`}>
                                             <Input style={tw`h-12 border-0  ${Platform.OS == 'web' ? 'w-[40%]' : 'w-full'}`}>
                                                 <InputSlot >
-                                                    <Button ref={ref2} onPress={() => { setShowScanner(true); }} style={tw`h-12 rounded-r-none rounded-l-3xl`}>
+                                                    <Button ref={ref2} onPress={() => { getCameraPermissions(); setShowScanner(true); }} style={tw`h-12 rounded-r-none bg-green-500 rounded-l-3xl`}>
                                                         <AntDesign name='camera' size={20} color={'white'} />
                                                     </Button>
 
@@ -166,13 +163,13 @@ function Admin() {
                                                                 </ModalCloseButton>
                                                             </ModalHeader>
                                                             <ModalBody style={tw`bg-black`}>
-                                                                <VStack style={tw`items-center gap-4 rounded-3xl overflow-hidden justify-center`}>
+                                                                <VStack style={tw`items-center gap-4 rounded-3xl overflow-hidden  h-130  border-white justify-center`}>
                                                                     {scanned ? <Text style={tw`font-extrabold text-xl`}>{formData.uid}</Text> : <CameraView
                                                                         onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
                                                                         barcodeScannerSettings={{
                                                                             barcodeTypes: ["qr", "pdf417"],
                                                                         }}
-                                                                        style={tw`flex-1 rounded-3xl flex-col border-white h-96 w-96 justify-center`}
+                                                                        style={tw`flex-1  rounded-3xl flex-col border-white h-96 w-96 justify-center`}
                                                                     />}
 
                                                                     <HStack style={tw`justify-center border-2 p-2 border-green-500 border-dashed rounded-2xl gap-2 items-center`}>
@@ -228,12 +225,12 @@ function Admin() {
                                             </Input>
 
                                             <Input style={tw`h-12 border-0 w-full rounded-3xl h-32 w-32 `}>
-                                                <InputField onChangeText={(v) => { setFormData(old => ({ ...old, points: v })) }} value={formData.points} style={tw`border-black text-3xl font-bold border-0 bg-white text-center`} maxLength={3} placeholder='100' type='text' />
+                                                <InputField onChangeText={(v) => { setFormData(old => ({ ...old, points: v })) }} value={formData.points} style={tw`border-black text-3xl font-bold border-0 bg-white text-center`} maxLength={4} placeholder='100' type='text' />
                                             </Input>
                                         </VStack>
                                     </Center>
 
-                                    <Button ref={ref} onPress={() => { setShowModal(true) }} style={tw`h-16 w-1/2 font-bold text-white text-3xl`}>
+                                    <Button ref={ref} onPress={() => { setShowModal(true) }} style={tw`h-16 w-1/2 font-bold bg-green-500 text-white text-3xl`}>
                                         <ButtonText>{PointType}</ButtonText>
                                     </Button>
 
@@ -252,8 +249,8 @@ function Admin() {
                                                 </ModalCloseButton>
                                             </ModalHeader>
                                             <ModalBody>
-                                                <HStack states={tw`items-center justify-center`}>
-                                                    <Text style={tw`${PointType == 'issue' ? 'text-green-600' : 'text-red-600'} w-1/2 text-center h-full text-8xl`}> {PointType == 'issue' ? '+' : '-'}{formPoints}</Text>
+                                                <HStack states={tw`items-center justify-center `}>
+                                                    <Text style={tw`${PointType == 'issue' ? 'text-green-600' : 'text-red-600'}   w-1/2 m-auto  text-5xl font-extrabold`}> {PointType == 'issue' ? '+' : '-'}{formPoints} PT(S)</Text>
                                                     <Text style={tw`text-3xl h-full w-1/2 text-black font-bold`}>
                                                         Are you sure you want to {PointType == 'issue' ? 'give' : 'take'} points?
                                                     </Text>

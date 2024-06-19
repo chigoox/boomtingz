@@ -26,8 +26,12 @@ export async function POST(request) {
             if (type == 'checkout') {
                 const { uid, cartID, } = event.data.object.metadata
                 const { orderID } = await useFethData('Admin', 'IDs')
-                const { name, email, exp, expToLv, level, loyaltyPoints } = await useFetchData('Users', uid)
+                let { name, email, exp, expToLv, level, loyaltyPoints } = await useFetchData('Users', uid)
                 const PTRate = 4 * level / 100
+                let points = Math.floor(loyaltyPoints) || 0
+                level = Math.floor(level) || 0
+                exp = Math.floor(exp) || 0
+                expToLv = Math.floor(expToLv) || 0
 
 
 
@@ -66,7 +70,11 @@ export async function POST(request) {
                 const arrayImages = await getArrayToAddImages()
                 const orderQTY = addArray(arrayQTY)
                 const orderPrice = addArray(arrayPrice)
-                console.log('first')
+
+                const loyaltyPointsGained = Number(points + (orderPrice * PTRate))
+
+
+
                 const order = {
                     userInfo: {
                         name: name,
@@ -79,7 +87,7 @@ export async function POST(request) {
                     images: arrayImages,
                     user: uid,
                     status: 'not started',
-                    driverLocationWhenComplete: [],
+                    loyaltyPoints: loyaltyPointsGained,
                     dateServer: serverTimestamp(),
                     dateReal: new Date().toLocaleString()
                 }
@@ -97,16 +105,16 @@ export async function POST(request) {
                 }
 
                 //await useSetDocument('User', uid, {currentOrder: ORDERID})
-                console.log(order)
-                const gainedXP = orderPrice
-                let expCarry = (exp + gainedXP) - expToLv
-                expCarry = expCarry < 0 ? 0 : expCarry
+                const gainedXP = formPoints;
+                let expCarry = (exp + gainedXP) - expToLv;
+                expCarry = expCarry < 0 ? 0 : expCarry;
+                const carryLvs = Math.floor(expCarry / expToLv);
 
                 useSetDocument('Users', uid, {
-                    loyaltyPoints: loyaltyPoints + orderPrice * PTRate,
-                    exp: expCarry > 0 ? expCarry : exp + gainedXP,
-                    level: expCarry > 0 ? level + 1 : level,
-                    expToLv: expToLv + 25
+                    loyaltyPoints: loyaltyPointsGained,
+                    exp: expCarry > 0 ? expCarry % expToLv : exp + gainedXP,
+                    level: level >= 100 ? 100 : level + (expCarry > 0 ? carryLvs + 1 : 0),
+                    expToLv: expToLv + (25 * (carryLvs + 1))
 
                 })
                 await deleteDoc(doc(db, 'Carts', cartID))
