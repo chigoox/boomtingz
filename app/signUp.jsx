@@ -1,7 +1,7 @@
 import { AntDesign } from '@expo/vector-icons';
 import { Button, ButtonText, Center, CheckIcon, Checkbox, CheckboxIcon, CheckboxIndicator, CheckboxLabel, EyeIcon, EyeOffIcon, FormControl, HStack, Heading, Input, InputField, InputIcon, InputSlot, KeyboardAvoidingView, VStack } from '@gluestack-ui/themed';
 import { useState } from 'react';
-import { Keyboard, Platform, StyleSheet, Text, TouchableWithoutFeedback } from 'react-native';
+import { Keyboard, Platform, Pressable, StyleSheet, Text, TouchableWithoutFeedback } from 'react-native';
 import tw from 'twrnc';
 import { getAuth, signInWithEmailAndPassword, sendEmailVerification, createUserWithEmailAndPassword, updateCurrentUser, updateProfile, sendPasswordResetEmail } from "firebase/auth";
 import { auth, data } from '../firebaseConfig';
@@ -70,7 +70,7 @@ export default function SignUp() {
         }
     }
     return (
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <Pressable style={tw`h-full`} onPress={() => { (Platform.OS != "web") ? Keyboard.dismiss() : null }}>
             <Center style={tw`bg-yellow-500 relative h-full`}>
                 <KeyboardAvoidingView
                     behavior={Platform.OS === 'ios' ? 'padding' : 'height'} >
@@ -151,7 +151,7 @@ export default function SignUp() {
                                 </VStack>}
                             </View>
                             <HStack style={tw`mt-4`}>
-                                <Checkbox onChange={(v) => { setRegister(v) }} size="md" isInvalid={false} isDisabled={false}>
+                                <Checkbox aria-label='check' onChange={(v) => { setRegister(v) }} size="md" isInvalid={false} isDisabled={false}>
                                     <CheckboxIndicator mr="$2">
                                         <CheckboxIcon as={CheckIcon} />
                                     </CheckboxIndicator>
@@ -174,7 +174,7 @@ export default function SignUp() {
                     </FormControl>
                 </KeyboardAvoidingView>
             </Center >
-        </TouchableWithoutFeedback>
+        </Pressable>
     )
 }
 

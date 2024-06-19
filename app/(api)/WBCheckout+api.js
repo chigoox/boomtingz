@@ -22,7 +22,7 @@ export async function POST(request) {
         const event = stripe.webhooks.constructEvent(body, signature, secret);
         if (event.type === "checkout.session.completed" || "payment_intent.succeeded" || 'charge.succeeded') {
             const { type } = event.data.object.metadata
-
+            console.log(event.data.object)
             if (type == 'checkout') {
                 const { uid, cartID, } = event.data.object.metadata
                 const { orderID } = await useFethData('Admin', 'IDs')
