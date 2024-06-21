@@ -104,8 +104,8 @@ export async function POST(request) {
 
                     ),
                     mode: 'payment',
-                    success_url: `http://${!__DEV__ ? siteName?.replace(/\s/g, '').replace(/\'/g, '') + '.vercel.app' : 'localhost:8081'}/orderSuccess/`,
-                    cancel_url: `http://${!__DEV__ ? siteName?.replace(/\s/g, '').replace(/\'/g, '') + '.vercel.app' : 'localhost:8081'}/`,
+                    success_url: `https://google.com`,
+                    cancel_url: `https://google.com`,
                     metadata: {
                         uid: UID,
                         cartID: cartID,

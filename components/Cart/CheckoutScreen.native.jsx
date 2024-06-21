@@ -67,7 +67,7 @@ export default function CheckoutScreen({ styles, cart, UID, setIsLoading }) {
 
         const { error } = await initPaymentSheet({
             merchantDisplayName: siteName,
-            returnURL: __DEV__ ? 'http://localhost:8081:/orderSucess' : 'https://boomtingz.com/orderSucess',
+            returnURL: __DEV__ ? 'http://localhost:8081/orderSucess' : 'https://boomtingz.com/orderSucess',
             customerId: customer,
             customerEphemeralKeySecret: ephemeralKey,
             paymentIntentClientSecret: paymentIntent,

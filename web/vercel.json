@@ -4,7 +4,9 @@
   "devCommand": "expo",
   "cleanUrls": true,
   "framework": null,
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+  "rewrites": [
+    {
+      "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+    }
+  ]
 }
-  
-

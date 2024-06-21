@@ -1,0 +1,30 @@
+plugins = []
+headers = []
+
+
+
+
+
+[functions]
+
+[functions."*"]
+
+[build]
+publish = "/Users/Gallifrey/Desktop/app5/boomtingz"
+publishOrigin = "default"
+command = "expo export -p web"
+commandOrigin = "heuristics"
+
+[build.environment]
+
+[build.processing]
+
+[build.processing.css]
+
+[build.processing.html]
+
+[build.processing.images]
+
+[build.processing.js]
+
+[build.services]
