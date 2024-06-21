@@ -29,14 +29,14 @@ export const CartReducer = (state, action) => {
          return {
             ...state,
             lineItems: { ...state.lineItems, [action.value.priceID]: { ...action.value, Qty: (stateQTY - actionQTY < 0) ? 0 : stateQTY - actionQTY } },
-            total: stateTotal - actionPrice,
+            total: (stateTotal - actionPrice) < 0 ? 0 : stateTotal - actionPrice
          };
       }
       case "SET_CART": {
          return {
             ...state,
             lineItems: { ...state.lineItems, [action.value.priceID]: { ...action.value, Qty: actionQTY } },
-            total: actionPrice,
+            total: (stateTotal - actionPrice) < 0 ? 0 : stateTotal - actionPrice,
          };
       }
       case "REMOVE_FROM_CART": {

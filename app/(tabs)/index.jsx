@@ -101,7 +101,7 @@ export default function HomeScreen({ }) {
                 <Heading style={tw``} color='white' size="xl">{name}</Heading>
                 <HStack style={tw`text-white`} space='md'>
                   <Text color='yellow' bold size="md">Lv: {level}</Text>
-                  <Text color='green' bold size='md'>Points: {formatNumber(loyaltyPoints)}</Text>
+                  <Text color='green' bold size='md'>Pt: {formatNumber(loyaltyPoints)}</Text>
                 </HStack>
                 <Progress value={(exp / expToLv) * 100} my={'$2'} w="$full" h="$2" size="sm">
                   <ProgressFilledTrack bg="$amber600" />
@@ -113,7 +113,7 @@ export default function HomeScreen({ }) {
         </Center>
 
         <Center style={tw`p-4`}>
-          {userData && <Card style={tw`h-52  w-auto bg-[#333333] p-4`}>
+          {userData && <Card style={tw`h-52  w-96 bg-[#333333] p-4`}>
             <Center>
               <Heading color='white'>Past Orders</Heading>
             </Center>
@@ -121,16 +121,17 @@ export default function HomeScreen({ }) {
             <ScrollView style={``}>
               <Center>
                 {orders?.map((order, index) => (
-                  <HStack key={index} space='md' style={tw` items-center p-4 my-2`}>
+                  <HStack key={index} space='md' style={tw`h-24 w-full border border-dashed border-green-500 items-center p-4 my-2`}>
                     <Image alt={order?.id} style={tw`h-12  w-12 rounded-full`} source={{
                       uri: order?.images ? order?.images[0] : 'https://images.unsplash.com/photo-1511556820780-d912e42b4980?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
                     }} />
-                    <VStack space='sm'>
+                    <VStack space='sm' style={tw`w-1/3  items-center justify-center`}>
                       <Text color='white'>{order?.id}</Text>
-                      <Text color='white'>{order?.total}</Text>
+                      <Text color='white'>Total: ${order?.total}</Text>
+                      <Text color='white'>QTY: {order?.qty}</Text>
                     </VStack>
                     <View>
-                      <Text color='yello'>+{formatNumber(order?.loyaltyPoints)}</Text>
+                      <Text color='yellow'> PTs +{formatNumber(order?.loyaltyPoints)}</Text>
                     </View>
 
                   </HStack>

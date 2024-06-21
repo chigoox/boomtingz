@@ -117,18 +117,18 @@ function Admin() {
                                         <ButtonText>Redeem Points</ButtonText>
                                     </Button>
                                 </HStack>
-                                <Center style={tw`h-96 gap-2`}>
+                                <Center style={tw`h-96 top-8 gap-2`}>
                                     <Center style={tw`h-24 border-white  w-full`}>
-                                        <HStack space='md'>
+                                        <HStack space='md' style={tw` border-white `}>
                                             <Image style={tw`h-24 w-16 border-dashed border border-green-500 rounded-2xl`} source={{ uri: avatar }} alt='User' />
                                             <VStack>
                                                 <VStack space=''>
                                                     <Text style={tw`text-2xl text-white font-bold`}>{name}</Text>
                                                     <Text style={tw`text-white mb-2`}>{email}</Text>
-                                                    <HStack space='lg' style={tw`font-bold`}>
-                                                        <Text style={tw`text-white bg-green-700 rounded-full p-2 font-bold`}>Lv: {formatNumber(level)}</Text>
-                                                        <Text style={tw`text-white bg-green-700 rounded-full p-2 font-bold`}>Pt: {formatNumber(Number(points))}</Text>
-                                                        <Text style={tw`text-white bg-green-700 rounded-full p-2 font-bold`}>NX: {formatNumber(Number(exp))} / {formatNumber(Number(expToLv))}</Text>
+                                                    <HStack space='sm' style={tw`font-bold`}>
+                                                        <Text style={tw`text-white bg-green-700 w-18 rounded-full p-2 font-bold`}>Lv: {formatNumber(level)}</Text>
+                                                        <Text style={tw`text-white bg-green-700 w-25 rounded-full p-2 font-bold`}>Pt: {formatNumber(Number(points))}</Text>
+                                                        <Text style={tw`text-white bg-green-700 w-25  rounded-full p-2 text-xs  font-bold`}>XP: {formatNumber(Number(exp))} / {formatNumber(Number(expToLv))}</Text>
                                                     </HStack>
                                                 </VStack>
                                                 <Progress value={(exp / expToLv) * 100} my={'$2'} w="$full" h="$2" size="sm">
@@ -139,7 +139,7 @@ function Admin() {
                                         </HStack>
 
                                     </Center>
-                                    <Center style={tw`border-white  w-full`}>
+                                    <Center style={tw`border-white top-2 my-2  w-full`}>
                                         <VStack style={tw`border-white  w-full items-center justify-center gap-4`}>
                                             <Input style={tw`h-12 border-0  ${Platform.OS == 'web' ? 'w-[40%]' : 'w-full'}`}>
                                                 <InputSlot >

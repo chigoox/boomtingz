@@ -18,7 +18,6 @@ if (Platform.OS !== 'web') {
 
 
 export default function CheckoutScreen({ styles, cart, UID, setIsLoading }) {
-    console.log(cart)
 
     const { initPaymentSheet, presentPaymentSheet } = useStripe();
     const [loading, setLoading] = useState(false);

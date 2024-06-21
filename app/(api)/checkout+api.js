@@ -104,8 +104,8 @@ export async function POST(request) {
 
                     ),
                     mode: 'payment',
-                    success_url: `https://google.com`,
-                    cancel_url: `https://google.com`,
+                    success_url: __DEV__ ? 'http://localhost:8081/orderSuccess' : `https://boomtingz.vercel.app/orderSuccess`,
+                    cancel_url: __DEV__ ? 'http://localhost:8081' : `https://boomtingz.vercel.app`,
                     metadata: {
                         uid: UID,
                         cartID: cartID,

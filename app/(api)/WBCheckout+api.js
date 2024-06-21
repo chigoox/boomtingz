@@ -114,7 +114,8 @@ export async function POST(request) {
                     loyaltyPoints: loyaltyPointsGained,
                     exp: expCarry > 0 ? expCarry % expToLv : exp + gainedXP,
                     level: level >= 100 ? 100 : level + (expCarry > 0 ? carryLvs + 1 : 0),
-                    expToLv: expToLv + (25 * (carryLvs + 1))
+                    expToLv: expToLv + (25 * (carryLvs + 1)),
+                    cart: { lineItems: {}, total: 0 }
 
                 })
                 await deleteDoc(doc(db, 'Carts', cartID))

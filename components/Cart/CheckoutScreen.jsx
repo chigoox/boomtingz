@@ -6,7 +6,6 @@ import tw from "twrnc";
 
 
 export default function CheckoutScreen({ styles, cart, UID, setIsLoading }) {
-    console.log(cart)
     checkout = async () => {
         setIsLoading(true)
         try {

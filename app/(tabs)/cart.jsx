@@ -1,32 +1,32 @@
 
 import useCheckSignedIn from '@/hooks/useCheckSignedIn';
 import { Center, HStack, SafeAreaView, ScrollView, Text, VStack, View } from "@gluestack-ui/themed";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import tw from "twrnc";
 import { useCartContext } from '../../StateManger/CartConext.jsx';
 import CartItem from '../../components/Cart/CartItem.jsx';
 import CheckoutScreen from '../../components/Cart/CheckoutScreen';
 import Loading from '../../components/Loading.jsx';
-import useSetDocument from '../../hooks/useSetDocument.js';
 
 
 function Cart() {
     const { state } = useCartContext()
-    const { lineItems, total } = state
+    console.log(state)
+    const { lineItems, total } = state || { lineItems: {}, total: 0 }
 
     const user = useCheckSignedIn()
     const UID = user?.uid
 
     const [isLoading, setIsLoading] = useState(false)
 
-    const checkOutItems = Object.values(lineItems).map(item => ({ price: item.priceID, category: item.category, quantity: Number(item.Qty) }))
+    const checkOutItems = Object.values(lineItems).map(item => ({ price: item?.priceID, category: item?.category, quantity: Number(item?.Qty) }))
 
 
 
     //updates cart in database
-    useEffect(() => {
+    /* useEffect(() => {
         if (UID && state) useSetDocument('Users', UID, state)
-    }, [lineItems])
+    }, [lineItems]) */
 
 
 
