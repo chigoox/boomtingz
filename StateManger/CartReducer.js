@@ -9,8 +9,8 @@ export const initialCartState = {
 export const CartReducer = (state, action) => {
    const stateQTY = state?.lineItems[action?.value?.priceID]?.Qty ? state?.lineItems[action.value.priceID].Qty : 0
    const stateTotal = state?.total ? state?.total : 0
-   const actionQTY = action?.value?.Qty
-   const actionPrice = action?.value?.price * actionQTY
+   const actionQTY = action?.value?.Qty || 0
+   const actionPrice = action?.value?.price * actionQTY || 0
 
 
    switch (action.type) {

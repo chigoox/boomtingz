@@ -5,7 +5,7 @@ import tw from 'twrnc'
 import { useCartContext } from '../../StateManger/CartConext'
 
 const ItemQTYButton = ({ size = 'md', product, setState, forCart }) => {
-    const [QTY, setQTY] = useState(product?.Qty || 0)
+    const [QTY, setQTY] = useState(product?.Qty || 1)
     const { dispatch } = useCartContext()
     const controlQTY = (action = 'add', count = 1) => {
         if (action == 'add') setQTY(prevState => prevState < 99 ? prevState + count : prevState)

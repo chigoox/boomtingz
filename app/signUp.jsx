@@ -1,16 +1,15 @@
 import { AntDesign } from '@expo/vector-icons';
 import { Button, ButtonText, Center, CheckIcon, Checkbox, CheckboxIcon, CheckboxIndicator, CheckboxLabel, EyeIcon, EyeOffIcon, FormControl, HStack, Heading, Input, InputField, InputIcon, InputSlot, KeyboardAvoidingView, VStack } from '@gluestack-ui/themed';
-import { useState } from 'react';
-import { Keyboard, Platform, Pressable, StyleSheet, Text, TouchableWithoutFeedback } from 'react-native';
-import tw from 'twrnc';
-import { getAuth, signInWithEmailAndPassword, sendEmailVerification, createUserWithEmailAndPassword, updateCurrentUser, updateProfile, sendPasswordResetEmail } from "firebase/auth";
-import { auth, data } from '../firebaseConfig';
-import { addToDocumentCollection } from '../constants/Utils';
 import { router } from 'expo-router';
+import { createUserWithEmailAndPassword, sendEmailVerification, sendPasswordResetEmail, signInWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from 'firebase/firestore';
-import { View } from 'react-native';
-import { Image } from '@gluestack-ui/themed';
+import { useState } from 'react';
+import { Keyboard, Platform, Pressable, Text, TurboModuleRegistry, View } from 'react-native';
+import tw from 'twrnc';
 import Logo from '../components/Logo';
+import { auth, data } from '../firebaseConfig';
+import Loading from '../components/Loading.jsx';
+import ToastMessage from '../components/Toast.jsx';
 
 
 
@@ -20,15 +19,26 @@ export default function SignUp() {
     const [showPassword, setShowPassword] = useState(false)
     const [register, setRegister] = useState(false)
     const [loginInfo, setLoginInfo] = useState({})
-    console.log(loginInfo)
 
+    const [isLoading, setIsLoading] = useState(false)
+    const [showToast, setShowToast] = useState(false)
+    const [toastInfo, setToastInfo] = useState({ title: '', desc: '' })
+    const toast = (title, desc) => {
+        console.log(title)
+        setToastInfo({ title: title, desc: desc })
+        setShowToast(true)
+    }
     const handleState = () => {
         setShowPassword((showState) => {
             return !showState
         })
     }
     const createAccount = async () => {
-        if (loginInfo.password != loginInfo.passwordMatch) return
+        if (loginInfo.password != loginInfo.passwordMatch) {
+            toast('Error', 'Password dosen\'t match')
+            return
+        }
+        setIsLoading(true)
         try {
             const { user } = await createUserWithEmailAndPassword(auth, loginInfo.email, loginInfo.password)
             await sendEmailVerification(user)
@@ -50,33 +60,52 @@ export default function SignUp() {
             router.push('/')
 
         } catch (error) {
+            if (!loginInfo?.email) toast('Error', 'No email')
+            if (!loginInfo?.name) toast('Error', 'No name')
+            if (!loginInfo?.password) toast('Error', 'No password')
+            if (!loginInfo?.passwordMatch) toast('Error', 'Retype password')
+            toast('Error', error.message)
+            setIsLoading(false)
             console.log(error.message)
         }
     }
     const signin = async () => {
+        setIsLoading(true)
         try {
             await signInWithEmailAndPassword(auth, loginInfo.email, loginInfo.password)
             router.push('/')
         } catch (e) {
-            console.log(e.message)
+
+            toast('Login Error', 'Invalid email and password combo!')
+            setIsLoading(false)
+
         }
     }
 
     const forgotPassword = async () => {
+        setIsLoading(true)
         try {
-            await sendPasswordResetEmail(loginInfo.email)
+            console.log(loginInfo)
+            await sendPasswordResetEmail(auth, loginInfo.email)
+            setIsLoading(false)
+
         } catch (error) {
-            console.log(error.message)
+            if (!loginInfo?.email) toast('Error', 'Enter Email')
+            toast('Error', error.message)
+            setIsLoading(false)
+
         }
     }
     return (
         <Pressable style={tw`h-full`} onPress={() => { (Platform.OS != "web") ? Keyboard.dismiss() : null }}>
+            {isLoading && <Loading />}
             <Center style={tw`bg-yellow-500 relative h-full`}>
                 <KeyboardAvoidingView
                     behavior={Platform.OS === 'ios' ? 'padding' : 'height'} >
                     <View style={tw`absolute -top-10 left-0 h-40  w-[15rem]`}>
                         <Logo />
                     </View>
+                    <ToastMessage setShow={setShowToast} show={showToast} title={toastInfo.title} desc={toastInfo.desc} />
                     <FormControl
                         p="$4"
                         borderWidth="$1"

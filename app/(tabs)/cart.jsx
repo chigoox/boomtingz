@@ -1,21 +1,23 @@
 
 import useCheckSignedIn from '@/hooks/useCheckSignedIn';
 import { Center, HStack, SafeAreaView, ScrollView, Text, VStack, View } from "@gluestack-ui/themed";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import tw from "twrnc";
 import { useCartContext } from '../../StateManger/CartConext.jsx';
 import CartItem from '../../components/Cart/CartItem.jsx';
 import CheckoutScreen from '../../components/Cart/CheckoutScreen';
 import Loading from '../../components/Loading.jsx';
+import useFetchData from '../../hooks/useFetchData.js';
 
 
 function Cart() {
     const { state } = useCartContext()
-    console.log(state)
-    const { lineItems, total } = state || { lineItems: {}, total: 0 }
 
+    const { lineItems, total } = state || { lineItems: {}, total: 0 }
     const user = useCheckSignedIn()
     const UID = user?.uid
+
+
 
     const [isLoading, setIsLoading] = useState(false)
 

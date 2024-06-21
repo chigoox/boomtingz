@@ -38,12 +38,12 @@ export default function HomeScreen({ }) {
   const uid = user?.uid
   const [userData, setUserData] = useState()
   const [orders, setOrders] = useState()
-
+  const [isLoading, setIsLoading] = useState(false)
   useFetchData('Users', uid, setUserData)
   useEffect(() => {
     const run = async () => {
       const data = await useFetchDocs('Orders', 'user', '==', uid, 'dateServer')
-      setOrders(data)
+      if (!orders) setOrders(data)
     }
     run()
 
@@ -63,7 +63,6 @@ export default function HomeScreen({ }) {
     await signOut(auth)
     router.replace('/signUp')
   }
-
 
 
 
@@ -118,26 +117,24 @@ export default function HomeScreen({ }) {
               <Heading color='white'>Past Orders</Heading>
             </Center>
 
-            <ScrollView style={``}>
-              <Center>
-                {orders?.map((order, index) => (
-                  <HStack key={index} space='md' style={tw`h-24 w-full border border-dashed border-green-500 items-center p-4 my-2`}>
-                    <Image alt={order?.id} style={tw`h-12  w-12 rounded-full`} source={{
-                      uri: order?.images ? order?.images[0] : 'https://images.unsplash.com/photo-1511556820780-d912e42b4980?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-                    }} />
-                    <VStack space='sm' style={tw`w-1/3  items-center justify-center`}>
-                      <Text color='white'>{order?.id}</Text>
-                      <Text color='white'>Total: ${order?.total}</Text>
-                      <Text color='white'>QTY: {order?.qty}</Text>
-                    </VStack>
-                    <View>
-                      <Text color='yellow'> PTs +{formatNumber(order?.loyaltyPoints)}</Text>
-                    </View>
+            <ScrollView style={tw`h-52 w-full border`}>
+              {orders?.map((order, index) => (
+                <HStack key={index} space='md' style={tw`h-24 w-full border border-dashed border-green-500 rounded-lg items-center p-4 my-2`}>
+                  <Image alt={order?.id} style={tw`h-12  w-12 rounded-full`} source={{
+                    uri: order?.images ? order?.images[0] : 'https://images.unsplash.com/photo-1511556820780-d912e42b4980?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+                  }} />
+                  <VStack space='sm' style={tw`w-1/3  items-center justify-center`}>
+                    <Text color='white'>{order?.id}</Text>
+                    <Text color='white'>Total: ${order?.total}</Text>
+                    <Text color='white'>QTY: {order?.qty}</Text>
+                  </VStack>
+                  <View>
+                    <Text color='yellow'> PTs +{formatNumber(order?.loyaltyPoints)}</Text>
+                  </View>
 
-                  </HStack>
-                ))}
+                </HStack>
+              ))}
 
-              </Center>
             </ScrollView>
 
           </Card>}
