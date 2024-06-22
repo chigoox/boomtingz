@@ -104,7 +104,7 @@ export async function POST(request) {
 
                     ),
                     mode: 'payment',
-                    success_url: __DEV__ ? 'http://localhost:8081/orderSuccess' : `https://boomtingz.vercel.app/orderSuccess`,
+                    success_url: __DEV__ ? `http://localhost:8081/orderSuccess?session_id={CHECKOUT_SESSION_ID}&UID=${UID}` : `https://boomtingz.vercel.app/orderSuccess?session_id={CHECKOUT_SESSION_ID}&UID=${UID}`,
                     cancel_url: __DEV__ ? 'http://localhost:8081' : `https://boomtingz.vercel.app`,
                     metadata: {
                         uid: UID,

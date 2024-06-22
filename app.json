@@ -5,7 +5,7 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/logo.png",
-    "scheme": "myapp",
+    "scheme": "boomtingz",
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/images/splash.png",
@@ -48,6 +48,10 @@
       },
       "eas": {
         "projectId": "d219c72c-fe14-4057-92cc-780ec4918c39"
+      },
+      "deepLink": {
+        "path": "payment/:sessionId",
+        "queryStringParams": ["custom_param"]
       }
     },
     "owner": "chigoox"

@@ -13,7 +13,6 @@ const fetchDoc = async (collection, document, listen) => {
 
     const snapShot = await getDoc(documentRef)
     if (snapShot.exists) {
-        console.log('data:', snapShot.data())
         return (snapShot.data())
     }
     else {

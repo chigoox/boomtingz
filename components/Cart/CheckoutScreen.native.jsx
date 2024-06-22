@@ -8,6 +8,7 @@ import tw from "twrnc";
 import { siteName } from "../../constants/META";
 import { deleteDoc, doc } from "firebase/firestore";
 import { data as db } from "../../firebaseConfig";
+import * as Linking from 'expo-linking';
 
 let StripeProvider;
 let useStripe;
@@ -66,7 +67,7 @@ export default function CheckoutScreen({ styles, cart, UID, setIsLoading }) {
 
         const { error } = await initPaymentSheet({
             merchantDisplayName: siteName,
-            returnURL: __DEV__ ? 'http://localhost:8081/orderSucess' : 'https://boomtingz.com/orderSucess',
+            returnURL: Linking.createURL(`/orderSuccess?payment_intent={PAYMENT_INTENT_ID}&UID=${UID}`),
             customerId: customer,
             customerEphemeralKeySecret: ephemeralKey,
             paymentIntentClientSecret: paymentIntent,
@@ -106,7 +107,7 @@ export default function CheckoutScreen({ styles, cart, UID, setIsLoading }) {
         <StripeProvider
             publishableKey="pk_test_51PHR6VLenbFU4c2Ha1rkyVqmQ3qhQKOI2Ud9NQfbSeJsZ056O1Wcr8YCkbTgEIPPmP4NEhW7QefVW94aehYijAr000qLipw1CQ"
             merchantIdentifier="merchant.com.stripe.react.native"
-            urlScheme="myapp"
+            urlScheme="boomtingz"
             threeDSecureParams={{
                 returnUrl: "http://192.168.153:8081",
             }}

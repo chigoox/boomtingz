@@ -1,17 +1,15 @@
 
 import { AntDesign, Ionicons } from '@expo/vector-icons';
-import { Button, ButtonText, Center, CloseIcon, HStack, Heading, Input, InputField, InputSlot, KeyboardAvoidingView, ModalBackdrop, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, Progress, ProgressFilledTrack, SafeAreaView, Text, VStack, View } from "@gluestack-ui/themed";
-import { useEffect, useRef, useState } from "react";
-import { Alert, Keyboard, Platform, Image } from 'react-native';
+import { Button, ButtonText, Center, CloseIcon, HStack, Heading, Icon, Input, InputField, InputSlot, KeyboardAvoidingView, Modal, ModalBackdrop, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, Progress, ProgressFilledTrack, SafeAreaView, Text, VStack, View } from "@gluestack-ui/themed";
+import { Camera, CameraView } from "expo-camera";
+import { router } from 'expo-router';
+import { useRef, useState } from "react";
+import { Alert, Image, Platform } from 'react-native';
 import tw from "twrnc";
 import Loading from '../components/Loading.jsx';
+import { formatNumber } from '../constants/Utils.js';
 import useFetchData from '../hooks/useFetchData.js';
 import useSetDocument from '../hooks/useSetDocument.js';
-import { formatNumber } from '../constants/Utils.js';
-import { Modal } from '@gluestack-ui/themed';
-import { Icon } from '@gluestack-ui/themed';
-import { CameraView, Camera } from "expo-camera";
-import { router } from 'expo-router';
 function Admin() {
 
 
