@@ -1,5 +1,5 @@
 import { View, Text } from 'react-native'
-import React from 'react'
+import React, { memo } from 'react'
 import ItemQTYButton from '../Shop/ItemQTYButton'
 import { useCartContext } from '../../StateManger/CartConext'
 import { Card, HStack } from '@gluestack-ui/themed'
@@ -9,7 +9,7 @@ import { getRandNum } from '../../constants/Utils'
 import tw from "twrnc";
 import { Ionicons } from '@expo/vector-icons'
 
-const CartItem = ({ item }) => {
+const CartItem = memo(({ item }) => {
     const { dispatch } = useCartContext()
     const Trash2Icon = <Ionicons name='trash' color={'red'} />
 
@@ -17,7 +17,7 @@ const CartItem = ({ item }) => {
         dispatch({ type: "REMOVE_FROM_CART", value: itemRemove })
     }
     return (
-        <View key={item.priceId + String(getRandNum())} style={tw`h-36 my-1 border p-2 border-dashed rounded   border-green-700  relative`}>
+        <View key={item.priceId + String(getRandNum())} style={tw`h-36 my-2 border p-2 border-dashed rounded   border-green-700  relative`}>
             <HStack style={tw`gap-2 items-center justify-center  relative h-1/2 top-4 p-2`}>
                 <Card style={tw`w-20 h-24 p-0 border border-gray-700 border-dashed relative bg-black overflow-hidden`}>
                     <Image style={tw`w-20 h-24`} source={{ uri: item.images ? item.images[0] : '' }} alt="" />
@@ -39,6 +39,6 @@ const CartItem = ({ item }) => {
             </Button>
         </View>
     )
-}
+})
 
 export default CartItem

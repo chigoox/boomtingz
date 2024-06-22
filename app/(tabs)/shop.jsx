@@ -1,5 +1,5 @@
 import { Box, Button, ButtonText, Center, HStack, Input, InputField, InputIcon, InputSlot, Link, SafeAreaView, ScrollView, SearchIcon, Text, VStack } from '@gluestack-ui/themed';
-import { Image, Keyboard, TextInput, View } from 'react-native';
+import { Image, Keyboard, KeyboardAvoidingView, TextInput, View } from 'react-native';
 
 import { useEffect, useState } from 'react';
 import tw from "twrnc";
@@ -147,7 +147,7 @@ export default function Shop() {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={tw`flex ${OS == 'web' ? `${screenSize == 'SM' ? 'px-2' : screenSize == 'MD' ? 'px-20' : screenSize == 'LG' ? 'px-50' : screenSize == 'XL' ? 'px-72' : 'px-96'}` : 'px-2'}  h-full overflow-hidden text-white bg-black`}>
+      <KeyboardAvoidingView style={tw`flex ${OS == 'web' ? `${screenSize == 'SM' ? 'px-2' : screenSize == 'MD' ? 'px-20' : screenSize == 'LG' ? 'px-50' : screenSize == 'XL' ? 'px-72' : 'px-96'}` : 'px-2'}  h-full overflow-hidden text-white bg-black`}>
         <SafeAreaView>
           <Logo size={'sm'} />
           <ProductView product={selectedProduct} setShowProductView={setSelectedProduct} showProductView={selectedProduct} />
@@ -226,7 +226,7 @@ export default function Shop() {
             </View>
           </ScrollView>
         </SafeAreaView>
-      </View>
+      </KeyboardAvoidingView>
     </TouchableWithoutFeedback>
   )
 }

@@ -1,8 +1,8 @@
 
 import { AntDesign, Ionicons } from '@expo/vector-icons';
-import { Button, ButtonText, Center, CloseIcon, HStack, Heading, Image, Input, InputField, InputSlot, KeyboardAvoidingView, ModalBackdrop, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, Progress, ProgressFilledTrack, SafeAreaView, Text, VStack, View } from "@gluestack-ui/themed";
+import { Button, ButtonText, Center, CloseIcon, HStack, Heading, Input, InputField, InputSlot, KeyboardAvoidingView, ModalBackdrop, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, Progress, ProgressFilledTrack, SafeAreaView, Text, VStack, View } from "@gluestack-ui/themed";
 import { useEffect, useRef, useState } from "react";
-import { Alert, Keyboard, Platform } from 'react-native';
+import { Alert, Keyboard, Platform, Image } from 'react-native';
 import tw from "twrnc";
 import Loading from '../components/Loading.jsx';
 import useFetchData from '../hooks/useFetchData.js';
@@ -21,7 +21,7 @@ function Admin() {
     const menus = ['Points']
     const [currentMenu, setCurrentMenu] = useState(menus[0])
 
-    const [userData, setUserData] = useState({})
+    const [userData, setUserData] = useState()
     useFetchData('Users', formData.uid, setUserData)
 
     const [hasPermission, setHasPermission] = useState(null);
@@ -37,7 +37,7 @@ function Admin() {
     const handleBarCodeScanned = ({ type, data }) => {
         setScanned(true);
         setFormData(old => ({ ...old, uid: data }))
-        alert(`Bar code with type ${type} and data ${data} has been scanned!`);
+        alert(`Scanned: ${data}`);
     };
 
 
@@ -173,7 +173,7 @@ function Admin() {
                                                                     />}
 
                                                                     <HStack style={tw`justify-center border-2 p-2 border-green-500 border-dashed rounded-2xl gap-2 items-center`}>
-                                                                        <Image style={tw` bg-gray-200 w-18 rounded-2xl`} source={{ uri: avatar }} alt={name} />
+                                                                        <Image style={tw`h-24 bg-gray-200 w-18 border-white  rounded-2xl`} source={{ uri: avatar }} alt={name} />
                                                                         <VStack style={tw` h-24  justify-center`} w={'$40%'}>
                                                                             <Text style={tw`font-bold text-white`} >{name || '???'}</Text>
                                                                             <Text style={tw` text-white text-xs`}>{email || '???'}</Text>

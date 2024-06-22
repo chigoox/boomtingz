@@ -5,6 +5,7 @@ import { Image } from '@gluestack-ui/themed'
 import tw from 'twrnc'
 
 const Logo = ({ size }) => {
+    const logo = require('../assets/images/logo.png')
     return (
         <Center style={tw`${size == 'sm' ? '' : ''}`}>
             <View style={tw` overflow-hidden relative bg-black ${size == 'sm' ? 'h-24 w-24' : 'h-36 w-36'} border-4 border-red-700  rounded-full`}>
@@ -12,7 +13,7 @@ const Logo = ({ size }) => {
 
                 </View>
                 <View style={tw`  ${size == 'sm' ? 'h-20 w-20' : 'h-26 w-26'} rounded-full p-2 border-2 border-green-700 border-dashed  m-auto`}>
-                    <Image alt={'logo'} style={tw` ${size == 'sm' ? 'h-20 w-20' : 'h-26 w-26'} rounded-full  m-auto`} source={require('../assets/images/logo.png')} />
+                    <Image alt={'logo'} style={tw` ${size == 'sm' ? 'h-20 w-20' : 'h-26 w-26'} rounded-full  m-auto`} source={logo} />
 
                 </View>
             </View>
