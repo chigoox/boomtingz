@@ -40,7 +40,8 @@
         {
           "enableGooglePay": true
         }
-      ]
+      ],
+      "expo-font"
     ],
     "extra": {
       "router": {
@@ -51,7 +52,9 @@
       },
       "deepLink": {
         "path": "payment/:sessionId",
-        "queryStringParams": ["custom_param"]
+        "queryStringParams": [
+          "custom_param"
+        ]
       }
     },
     "owner": "chigoox"
