@@ -23,8 +23,10 @@ const orderSuccess = () => {
 
     useEffect(() => {
         const run = async () => {
+            setIsLoading(true)
             setUserData(await fetchDoc('Users', UID))
             useSetDocument('Users', UID, { cart: { lineItems: {}, total: 0 } })
+            setIsLoading(false)
         }
         if (UID) run()
     }, [UID])
@@ -47,7 +49,7 @@ const orderSuccess = () => {
                             <HStack style={tw`justify-center items-center`}>
                                 {Object.values(lineItems || {})?.map(item => {
                                     return (
-                                        <VStack style={tw`w-24 h-50  overflow-hidden items-center justify-center`}>
+                                        <VStack style={tw`w-24 h-50 P-2 overflow-hidden items-center justify-center`}>
                                             <Image alt={item.name} style={tw`rounded-full mb-1 border-2 border-green-700 text-black`} source={{ uri: item.images[0] }} />
                                             <Text style={tw`font-semibold text-black text-center h-14`}>{item.name}</Text>
                                             <Text style={tw` text-black `}>${item.price}</Text>
@@ -58,7 +60,7 @@ const orderSuccess = () => {
                             </HStack>
                         </ScrollView>
                         <View>
-                            <Text>{ }</Text>
+                            <Text style={tw`font-bold text-white text-center`}>Total: ${total}</Text>
                         </View>
                         <Button onPress={() => { router.push('/') }} style={tw`bg-yellow-500 border-2 border-black`}>
                             <ButtonText>Return Home</ButtonText>
