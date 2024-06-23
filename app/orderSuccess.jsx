@@ -1,63 +1,71 @@
-import { Button, Center, Heading, KeyboardAvoidingView, ScrollView, Text, VStack } from '@gluestack-ui/themed'
-import React, { useEffect, useState } from 'react'
-import { Platform, Pressable } from 'react-native'
-import Loading from '../components/Loading'
+import { Button, ButtonText, Center, HStack, Heading, Image, KeyboardAvoidingView, SafeAreaView, ScrollView, Text, VStack, View } from '@gluestack-ui/themed';
+import { router } from 'expo-router';
+import React, { useEffect, useState } from 'react';
+import { Keyboard, Platform, Pressable } from 'react-native';
 import tw from "twrnc";
-import { ButtonText } from '@gluestack-ui/themed';
-import { router, useLocalSearchParams } from 'expo-router';
+import Loading from '../components/Loading';
 import useSetDocument from '../hooks/useSetDocument';
-import useFetchData from '../hooks/useFetchData';
-import ShopItem from '../components/Shop/ShopItem';
 import fetchDoc from '../scripts/fetchDoc';
-import { Image } from '@gluestack-ui/themed';
+import useCheckSignedIn from '../hooks/useCheckSignedIn'
 
 const orderSuccess = () => {
-    const { UID } = useLocalSearchParams() || {}
+    const user = useCheckSignedIn()
+    const UID = user?.uid
     const [userData, setUserData] = useState({})
 
     const [isLoading, setIsLoading] = useState(false)
     const { cart } = userData || {}
     const { lineItems, total } = cart || {}
 
+    console.log(UID)
     console.log(userData)
+
+
     useEffect(() => {
         const run = async () => {
             setUserData(await fetchDoc('Users', UID))
             useSetDocument('Users', UID, { cart: { lineItems: {}, total: 0 } })
         }
-        run()
-    }, [])
+        if (UID) run()
+    }, [UID])
 
 
     return (
-        <Pressable style={tw`h-full`} onPress={() => { (Platform.OS != "web") ? Keyboard.dismiss() : null }}>
+        <Pressable style={tw`h-full bg-green-700`} onPress={() => { (Platform.OS != "web") ? Keyboard.dismiss() : null }}>
 
-            {isLoading && <Loading />}
-            <Center style={tw`bg-green-700 relative h-full`}>
-                <KeyboardAvoidingView
-                    behavior={Platform.OS === 'ios' ? 'padding' : 'height'} >
+            <SafeAreaView>
+                {isLoading && <Loading />}
+                <Center style={tw` relative h-full`}>
+                    <KeyboardAvoidingView
+                        behavior={Platform.OS === 'ios' ? 'padding' : 'height'} >
 
-                    <Center>
-                        <Heading size='xl'>Order Completed!</Heading>
+                        <Center>
+                            <Heading size='xl'>Order Completed!</Heading>
 
-                    </Center>
-                    <ScrollView style={tw`h-96 w-96 my-2 rounded-lg bg-yellow-500 p-4`}>
-                        {Object.values(lineItems || {})?.map(item => {
-                            return (
-                                <VStack style={tw`w-24 overflow-hidden items-center justify-center`}>
-                                    <Image style={tw`rounded-full text-black`} source={{ uri: item.images[0] }} />
-                                    <Text style={tw`text-center`}>{item.name}</Text>
-                                    <Text style={tw``}>{item.price}</Text>
-                                    <Text style={tw``}>{item.Qty}</Text>
-                                </VStack>
-                            )
-                        })}
-                    </ScrollView>
-                    <Button onPress={() => router.push('/')} style={tw`bg-yellow-500 border-2 border-black`}>
-                        <ButtonText>Return Home</ButtonText>
-                    </Button>
-                </KeyboardAvoidingView>
-            </Center>
+                        </Center>
+                        <ScrollView style={tw`${Platform.OS != 'web' ? 'w-96' : 'w-96'} h-96 my-2 rounded-lg bg-yellow-500 p-4`}>
+                            <HStack style={tw`justify-center items-center`}>
+                                {Object.values(lineItems || {})?.map(item => {
+                                    return (
+                                        <VStack style={tw`w-24 h-50  overflow-hidden items-center justify-center`}>
+                                            <Image alt={item.name} style={tw`rounded-full mb-1 border-2 border-green-700 text-black`} source={{ uri: item.images[0] }} />
+                                            <Text style={tw`font-semibold text-black text-center h-14`}>{item.name}</Text>
+                                            <Text style={tw` text-black `}>${item.price}</Text>
+                                            <Text style={tw` text-black `}>QTY:{item.Qty}</Text>
+                                        </VStack>
+                                    )
+                                })}
+                            </HStack>
+                        </ScrollView>
+                        <View>
+                            <Text>{ }</Text>
+                        </View>
+                        <Button onPress={() => { router.push('/') }} style={tw`bg-yellow-500 border-2 border-black`}>
+                            <ButtonText>Return Home</ButtonText>
+                        </Button>
+                    </KeyboardAvoidingView>
+                </Center>
+            </SafeAreaView>
         </Pressable>
     )
 }

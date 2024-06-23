@@ -67,7 +67,9 @@ export default function CheckoutScreen({ styles, cart, UID, setIsLoading }) {
 
         const { error } = await initPaymentSheet({
             merchantDisplayName: siteName,
-            returnURL: Linking.createURL(`/orderSuccess?payment_intent={PAYMENT_INTENT_ID}&UID=${UID}`),
+            returnURL: Linking.createURL(`/orderSuccess?payment_intent={PAYMENT_INTENT_ID}&UID=${UID}`, {
+                queryParams: { UID: UID }
+            }),
             customerId: customer,
             customerEphemeralKeySecret: ephemeralKey,
             paymentIntentClientSecret: paymentIntent,
