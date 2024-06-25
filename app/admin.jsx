@@ -10,6 +10,7 @@ import Loading from '../components/Loading.jsx';
 import { formatNumber } from '../constants/Utils.js';
 import useFetchData from '../hooks/useFetchData.js';
 import useSetDocument from '../hooks/useSetDocument.js';
+import { EXPRATE } from '../constants/META.js';
 function Admin() {
 
 
@@ -44,12 +45,12 @@ function Admin() {
     const name = userData?.name || ''
     const email = userData?.email || ''
     const avatar = userData?.avatar || ''
-    const points = Math.floor(userData?.loyaltyPoints) || 0
+    const points = userData?.loyaltyPoints || 0
     const formPoints = Math.floor(formData.points)
     const level = Math.floor(userData?.level) || 0
     const exp = Math.floor(userData?.exp) || 0
     const expToLv = Math.floor(userData?.expToLv) || 0
-    const rate = (4 * level) / 100
+    const rate = EXPRATE(level)
 
     const [showModal, setShowModal] = useState(false)
     const [showScanner, setShowScanner] = useState(false)
@@ -71,7 +72,7 @@ function Admin() {
                 loyaltyPoints: Number(points + (formPoints * rate)),
                 exp: expCarry > 0 ? expCarry % expToLv : exp + gainedXP,
                 level: level >= 100 ? 100 : level + (expCarry > 0 ? carryLvs + 1 : 0),
-                expToLv: expToLv + (25 * (carryLvs + 1))
+                expToLv: (expCarry > 0 || carryLvs > 0) ? expToLv + (25 * (carryLvs + 1)) : expToLv
             })
         } else if (PointType == 'redeem' && points - formData.points >= 0) {
             await useSetDocument('Users', formData.uid, {
@@ -125,7 +126,7 @@ function Admin() {
                                                     <Text style={tw`text-white mb-2`}>{email}</Text>
                                                     <HStack space='sm' style={tw`font-bold`}>
                                                         <Text style={tw`text-white bg-green-700 w-18 rounded-full p-2 font-bold`}>Lv: {formatNumber(level)}</Text>
-                                                        <Text style={tw`text-white bg-green-700 w-25 rounded-full p-2 font-bold`}>Pt: {formatNumber(Number(points))}</Text>
+                                                        <Text style={tw`text-white bg-green-700 w-25 rounded-full p-2 font-bold`}>Pt: {formatNumber(Number(points.toFixed(2)))}</Text>
                                                         <Text style={tw`text-white bg-green-700 w-25  rounded-full p-2 text-xs  font-bold`}>XP: {formatNumber(Number(exp))} / {formatNumber(Number(expToLv))}</Text>
                                                     </HStack>
                                                 </VStack>

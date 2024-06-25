@@ -5,7 +5,7 @@ import tw from "twrnc";
 
 const { Toast, useToast, Button, Icon, VStack, ToastTitle, ToastDescription, CheckIcon } = require("@gluestack-ui/themed");
 
-export default function ToastMessage({ setShow, show, title, desc }) {
+export default function ToastMessage({ setShow, show, title, desc, type = 'error' }) {
     const toast = useToast();
     const showToast = () => {
         toast.show({
@@ -13,7 +13,7 @@ export default function ToastMessage({ setShow, show, title, desc }) {
             render: ({ id }) => {
                 const toastId = "toast-" + id;
                 return (
-                    <Toast bg='$error700' style={tw`w-96`} nativeID={toastId}>
+                    <Toast bg={type == 'error' ? '$error700' : type == 'success' ? '$success700' : '$info700'} style={tw`w-96`} nativeID={toastId}>
                         <Icon as={SlashIcon} color='$white' mt='$1' mr='$3' />
                         <VStack space='xs' flex={1} style={tw`w-full`}>
                             <ToastTitle color='$textLight50' >{title}</ToastTitle>

@@ -3,12 +3,12 @@ import React, { useState } from 'react'
 import tw from 'twrnc'
 import QRCode from 'react-native-qrcode-svg';
 
-const QR = ({ valueQR }) => {
+const QR = ({ valueQR, title }) => {
     const [showQR, setShowQR] = useState(false)
     return (
         <View>
             <Button onPress={() => { setShowQR(true) }}>
-                <ButtonText>User QR code</ButtonText>
+                <ButtonText>{title} QR code</ButtonText>
             </Button>
             <Modal
                 isOpen={showQR}
@@ -20,7 +20,7 @@ const QR = ({ valueQR }) => {
                 <ModalBackdrop />
                 <ModalContent>
                     <ModalHeader>
-                        <Heading size="lg">UserID</Heading>
+                        <Heading size="lg">{title} Code</Heading>
                         <ModalCloseButton>
                             <Icon as={CloseIcon} />
                         </ModalCloseButton>

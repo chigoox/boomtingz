@@ -3,7 +3,7 @@ import Cors from "micro-cors";
 import { useFetchDocs } from "../../hooks/useFetchDocs";
 import useSetDocument from "../../hooks/useSetDocument";
 import { data as db } from "../../firebaseConfig";
-import { orderNumberPrefix } from "../../constants/META";
+import { EXPRATE, orderNumberPrefix } from "../../constants/META";
 
 
 
@@ -27,9 +27,9 @@ export async function POST(request) {
                 const { uid, cartID, } = event.data.object.metadata
                 const { orderID } = await useFethData('Admin', 'IDs')
                 let { name, email, exp, expToLv, level, loyaltyPoints } = await useFetchData('Users', uid)
-                const PTRate = 4 * level / 100
-                let points = Math.floor(loyaltyPoints) || 0
                 level = Math.floor(level) || 0
+                const PTRate = EXPRATE(level)
+                let points = Math.floor(loyaltyPoints) || 0
                 exp = Math.floor(exp) || 0
                 expToLv = Math.floor(expToLv) || 0
 
@@ -114,7 +114,7 @@ export async function POST(request) {
                     loyaltyPoints: loyaltyPointsGained,
                     exp: expCarry > 0 ? expCarry % expToLv : exp + gainedXP,
                     level: level >= 100 ? 100 : level + (expCarry > 0 ? carryLvs + 1 : 0),
-                    expToLv: expToLv + (25 * (carryLvs + 1)),
+                    expToLv: (expCarry > 0 || carryLvs > 0) ? expToLv + (25 * (carryLvs + 1)) : expToLv,
 
 
                 })

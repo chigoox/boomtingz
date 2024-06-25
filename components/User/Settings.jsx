@@ -9,7 +9,7 @@ import tw from 'twrnc'
 import useSetDocument from '@/hooks/useSetDocument'
 
 
-export const Settings = ({ showSettings, setShowSettings, name, avatar, uid, refDom }) => {
+export const Settings = ({ setIsLoading, showSettings, setShowSettings, name, avatar, uid, refDom }) => {
     const [settingsInfo, setSettingsInfo] = useState()
     const [selectedImage, setSelectedImage] = useState(null);
 
@@ -35,24 +35,28 @@ export const Settings = ({ showSettings, setShowSettings, name, avatar, uid, ref
 
     const uploadUriToFirebase = async (uri) => {
         try {
+            setIsLoading(true)
             const blob = await uriToBlob(uri);
             const storageRef = ref(storage, `images/avatars/${uid}.jpg`);
             const snapshot = await uploadBytes(storageRef, blob);
 
             const downloadURL = await getDownloadURL(snapshot.ref);
             //console.log('File available at:', downloadURL);
-
+            setIsLoading(false)
             return downloadURL;
         } catch (error) {
+            setIsLoading(false)
             console.error('Upload failed:', error.message);
         }
     }
     const saveSettings = async () => {
+        setIsLoading(true)
         if (settingsInfo?.name) useSetDocument('Users', uid, { name: settingsInfo.name })
         if (selectedImage) {
             const url = await uploadUriToFirebase(selectedImage);
             useSetDocument('Users', uid, { avatar: url })
         }
+        setIsLoading(false)
     }
 
 

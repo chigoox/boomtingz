@@ -1,22 +1,14 @@
+import Loading from '@/components/Loading.jsx';
+import ToastMessage from '@/components/Toast.jsx';
 import QR from '@/components/User/QR';
+import Claims from '@/components/User/Claims.jsx';
 import Settings from '@/components/User/Settings';
+import { auth } from '@/firebaseConfig';
 import useCheckSignedIn from '@/hooks/useCheckSignedIn';
 import useFetchData from '@/hooks/useFetchData';
+import useFetchDocs from '@/hooks/useFetchDocs';
 import { AntDesign, Ionicons } from '@expo/vector-icons';
-import {
-  Avatar, AvatarFallbackText,
-  AvatarImage, Button, ButtonIcon, ButtonText,
-  Card,
-  Center,
-  EditIcon,
-  HStack,
-  Heading,
-  Progress,
-  ProgressFilledTrack,
-  ScrollView,
-  Text,
-  VStack
-} from '@gluestack-ui/themed';
+import { Avatar, AvatarFallbackText, AvatarImage, Button, ButtonIcon, ButtonText, Card, Center, EditIcon, HStack, Heading, KeyboardAvoidingView, Progress, ProgressFilledTrack, ScrollView, Text, VStack } from '@gluestack-ui/themed';
 import UtilClass from 'codeby5/Support/UtilsClass';
 import { router } from 'expo-router';
 import { signOut } from 'firebase/auth';
@@ -24,22 +16,33 @@ import { useEffect, useRef, useState } from 'react';
 import { Image, Platform, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import tw from 'twrnc';
-import useFetchDocs from '@/hooks/useFetchDocs'
-import { auth } from '@/firebaseConfig';
-import { KeyboardAvoidingView } from '@gluestack-ui/themed';
-
-const { formatNumber, createArray } = new UtilClass
-
+import RedeemPoints from '../../components/User/RedeemPoints.jsx';
+import { EXPRATE } from '../../constants/META.js';
+const { formatNumber } = new UtilClass
 
 
 export default function HomeScreen({ }) {
   //check if logged in if not push to loginScreen
   const [showSettings, setShowSettings] = useState(false)
+  const [showRedeemPoints, setShowRedeemPoints] = useState(false)
+  const [showClaims, setShowClaims] = useState(false)
+
   const user = useCheckSignedIn(true)
   const uid = user?.uid
   const [userData, setUserData] = useState()
   const [orders, setOrders] = useState()
-  const [isLoading, setIsLoading] = useState(false)
+  const claims = userData.
+
+    const[isLoading, setIsLoading] = useState(false)
+  const [showToast, setShowToast] = useState(false)
+  const [toastInfo, setToastInfo] = useState({ title: '', desc: '' })
+  const toast = (title, desc, type) => {
+    console.log(title)
+    setToastInfo({ title: title, desc: desc, type: type })
+    setShowToast(true)
+  }
+
+
   useFetchData('Users', uid, setUserData)
   useEffect(() => {
     const run = async () => {
@@ -54,11 +57,11 @@ export default function HomeScreen({ }) {
   const exp = userData?.exp
   const expToLv = userData?.expToLv
   const level = userData?.level
-  const loyaltyPoints = userData?.loyaltyPoints
+  const loyaltyPoints = userData?.loyaltyPoints.toFixed(2)
   const avatar = userData?.avatar
   const role = userData?.role
   const name = userData?.name
-  const rate = 4 * level / 100
+  const rate = EXPRATE(level)
   const ref = useRef(null)
 
   const logOut = async () => {
@@ -82,7 +85,25 @@ export default function HomeScreen({ }) {
           behavior={Platform.OS === "ios" ? "padding" : "height"}
           keyboardVerticalOffset={80} // Adjust this offset as needed
         >
+          <ToastMessage setShow={setShowToast} show={showToast} title={toastInfo.title} desc={toastInfo.desc} type={toastInfo.type} />
+          {isLoading && <Loading />}
+          <RedeemPoints
+            setIsLoading={setIsLoading}
+            toast={toast}
+            showRedeemPoints={showRedeemPoints}
+            setShowRedeemPoints={setShowRedeemPoints}
+            points={loyaltyPoints}
+            uid={uid}
+          />
+          <Claims
+            setIsLoading={setIsLoading}
+            toast={toast}
+            showClaims={showClaims}
+            setShowClaims={setShowClaims}
+            uid={uid}
+          />
           <Settings
+            setIsLoading={setIsLoading}
             setShowSettings={setShowSettings}
             showSettings={showSettings}
             refDom={ref}
@@ -167,10 +188,10 @@ export default function HomeScreen({ }) {
 
             <Card style={tw`mt-4 h-auto bg-yellow-400`}>
               <View style={tw`flex-row gap-2 my-2`}>
-                <Button style={tw`h-12 bg-white`} bgColor='green' borderColor='black'>
-                  <ButtonText color='black'>Claim Points</ButtonText>
+                <Button onPress={() => { setShowClaims(true) }} style={tw`h-12 bg-white`} bgColor='green' borderColor='black'>
+                  <ButtonText color='black'>Claim Items</ButtonText>
                 </Button>
-                <Button style={tw`h-12`} bgColor='green' borderColor='black'>
+                <Button onPress={() => { setShowRedeemPoints(true) }} style={tw`h-12`} bgColor='green' borderColor='black'>
                   <ButtonText color='white'>Redeem Points</ButtonText>
                 </Button>
               </View>
@@ -178,7 +199,7 @@ export default function HomeScreen({ }) {
             </Card>
           </Center>
           <Center style={tw`gap-2 border mb-40`}>
-            <QR valueQR={uid} />
+            <QR title={'UserID'} valueQR={uid} />
             <HStack>
               <Button style={tw`h-8`} gap={'$2'} onPress={() => { setShowSettings(true) }} ref={ref} bg='$red'>
                 <ButtonIcon as={EditIcon} />
