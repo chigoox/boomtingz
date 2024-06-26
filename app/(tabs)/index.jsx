@@ -6,7 +6,7 @@ import Settings from '@/components/User/Settings';
 import { auth } from '@/firebaseConfig';
 import useCheckSignedIn from '@/hooks/useCheckSignedIn';
 import useFetchData from '@/hooks/useFetchData';
-import useFetchDocs from '@/hooks/useFetchDocs';
+import useFetchDocs, { useFetchDocsPresist } from '@/hooks/useFetchDocs';
 import { AntDesign, Ionicons } from '@expo/vector-icons';
 import { Avatar, AvatarFallbackText, AvatarImage, Button, ButtonIcon, ButtonText, Card, Center, EditIcon, HStack, Heading, KeyboardAvoidingView, Progress, ProgressFilledTrack, ScrollView, Text, VStack } from '@gluestack-ui/themed';
 import UtilClass from 'codeby5/Support/UtilsClass';
@@ -31,13 +31,12 @@ export default function HomeScreen({ }) {
   const uid = user?.uid
   const [userData, setUserData] = useState()
   const [orders, setOrders] = useState()
-  const claims = userData.
+  const [claims, setClaims] = useState()
 
-    const[isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const [showToast, setShowToast] = useState(false)
   const [toastInfo, setToastInfo] = useState({ title: '', desc: '' })
   const toast = (title, desc, type) => {
-    console.log(title)
     setToastInfo({ title: title, desc: desc, type: type })
     setShowToast(true)
   }
@@ -47,12 +46,15 @@ export default function HomeScreen({ }) {
   useEffect(() => {
     const run = async () => {
       if (!uid) return
-      const data = await useFetchDocs('Orders', 'user', '==', uid, 'dateServer')
-      if (!orders) setOrders(data)
+      const _orders = await useFetchDocs('Orders', 'user', '==', uid, 'dateServer')
+      useFetchDocsPresist('Claims', 'user', '==', uid, 'time', setClaims)
+      console.log(_orders)
+      if (!orders) setOrders(_orders)
+
     }
     run()
 
-  }, [uid])
+  }, [uid, showRedeemPoints])
 
   const exp = userData?.exp
   const expToLv = userData?.expToLv
@@ -101,6 +103,7 @@ export default function HomeScreen({ }) {
             showClaims={showClaims}
             setShowClaims={setShowClaims}
             uid={uid}
+            claims={claims}
           />
           <Settings
             setIsLoading={setIsLoading}

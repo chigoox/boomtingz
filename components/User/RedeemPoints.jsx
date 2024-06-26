@@ -1,6 +1,7 @@
 import { getRandTextNum } from '@/constants/Utils'
 import useSetDocument from '@/hooks/useSetDocument'
 import { Button, ButtonText, CloseIcon, HStack, Heading, Icon, Modal, ModalBackdrop, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ScrollView, Text, VStack, View } from '@gluestack-ui/themed'
+import { serverTimestamp } from 'firebase/firestore'
 import React, { useEffect, useState } from 'react'
 import tw from 'twrnc'
 
@@ -26,9 +27,11 @@ export const RedeemPoints = ({ setIsLoading, toast, showRedeemPoints, setShowRed
             })
             const claimID = `claim-${getRandTextNum(10)}`
             useSetDocument('Claims', claimID, {
-                claimID: claimID,
                 item: item.name,
-                const: item.cost
+                cost: item.cost,
+                user: uid,
+                id: claimID,
+                time: serverTimestamp()
             })
             setIsLoading(false)
             toast('Completed', 'You have claimed an item!', 'success')
@@ -66,13 +69,12 @@ export const RedeemPoints = ({ setIsLoading, toast, showRedeemPoints, setShowRed
                             const [confirm, setConfirm] = useState(false)
                             useEffect(() => {
                                 if (confirm == 'confirmed') {
-                                    console.log('first')
                                     setConfirm(false)
                                     redeem(item)
                                 }
                             }, [confirm])
                             return (
-                                <View style={tw`w-full justify-between rounded-lg h-16 border`}>
+                                <View key={item.name} style={tw`w-full justify-between rounded-lg h-16 border`}>
                                     <HStack style={tw`w-full justify-between p-2`}>
                                         <VStack>
                                             <Text style={tw`text-white font-semibold text-lg`}>{item.name}</Text>

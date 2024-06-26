@@ -1,14 +1,12 @@
-import { getRandTextNum } from '@/constants/Utils'
-import useSetDocument from '@/hooks/useSetDocument'
-import { Button, ButtonText, CloseIcon, HStack, Heading, Icon, Modal, ModalBackdrop, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ScrollView, Text, VStack, View } from '@gluestack-ui/themed'
-import React, { useEffect, useState } from 'react'
+import { Text, HStack, VStack, View, Button, ButtonText, CloseIcon, Heading, Icon, Modal, ModalBackdrop, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ScrollView } from '@gluestack-ui/themed'
+import React from 'react'
 import tw from 'twrnc'
+import QR from './QR'
 
-export const Claims = ({ setIsLoading, toast, showClaims, setShowClaims, uid }) => {
+export const Claims = ({ setIsLoading, toast, showClaims, setShowClaims, uid, claims }) => {
 
     //setIsLoading(false)
     // toast('Completed', 'You have claimed an item!', 'success')
-
 
 
 
@@ -30,8 +28,21 @@ export const Claims = ({ setIsLoading, toast, showClaims, setShowClaims, uid }) 
                     </ModalCloseButton>
                 </ModalHeader>
                 <ModalBody>
-                    <ScrollView>
+                    <ScrollView style={tw`h-96`}>
+                        {Object.values(claims || {})?.map((claim) => {
+                            return (
+                                <View key={claim.id} style={tw`w-full justify-between rounded-lg h-16 border`}>
+                                    <HStack style={tw`w-full justify-between p-2`}>
+                                        <VStack>
+                                            <Text style={tw`text-white font-semibold text-lg`}>{claim.item}</Text>
+                                            <Text style={tw`text-white`}>Cost: {claim.cost}</Text>
+                                        </VStack>
+                                        <QR title={'Claims'} valueQR={claim.id} />
 
+                                    </HStack>
+                                </View>
+                            )
+                        })}
                     </ScrollView>
                 </ModalBody>
                 <ModalFooter>

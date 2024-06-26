@@ -7,6 +7,7 @@ import Loading from '../components/Loading';
 import useSetDocument from '../hooks/useSetDocument';
 import fetchDoc from '../scripts/fetchDoc';
 import useCheckSignedIn from '../hooks/useCheckSignedIn'
+import { useCartContext } from '../StateManger/CartConext';
 
 const orderSuccess = () => {
     const user = useCheckSignedIn()
@@ -20,11 +21,14 @@ const orderSuccess = () => {
     console.log(UID)
     console.log(userData)
 
+    const { dispatch } = useCartContext()
+
 
     useEffect(() => {
         const run = async () => {
             setIsLoading(true)
             setUserData(await fetchDoc('Users', UID))
+            dispatch({ type: "EMPTY_CART" })
             useSetDocument('Users', UID, { cart: { lineItems: {}, total: 0 } })
             setIsLoading(false)
         }

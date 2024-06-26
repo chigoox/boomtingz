@@ -24,7 +24,6 @@ export default function SignUp() {
     const [showToast, setShowToast] = useState(false)
     const [toastInfo, setToastInfo] = useState({ title: '', desc: '' })
     const toast = (title, desc) => {
-        console.log(title)
         setToastInfo({ title: title, desc: desc })
         setShowToast(true)
     }

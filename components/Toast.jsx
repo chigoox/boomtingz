@@ -1,4 +1,4 @@
-import { AlertIcon, ButtonText, CloseIcon, SlashIcon } from "@gluestack-ui/themed";
+import { CloseIcon, SlashIcon } from "@gluestack-ui/themed";
 import { useEffect } from "react";
 import { Pressable } from "react-native";
 import tw from "twrnc";
@@ -14,7 +14,7 @@ export default function ToastMessage({ setShow, show, title, desc, type = 'error
                 const toastId = "toast-" + id;
                 return (
                     <Toast bg={type == 'error' ? '$error700' : type == 'success' ? '$success700' : '$info700'} style={tw`w-96`} nativeID={toastId}>
-                        <Icon as={SlashIcon} color='$white' mt='$1' mr='$3' />
+                        <Icon as={type == 'error' ? SlashIcon : CheckIcon} color='$white' mt='$1' mr='$3' />
                         <VStack space='xs' flex={1} style={tw`w-full`}>
                             <ToastTitle color='$textLight50' >{title}</ToastTitle>
                             <ToastDescription color='$textLight50'>{desc}</ToastDescription>
