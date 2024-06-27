@@ -18,7 +18,6 @@ function Cart() {
     const UID = user?.uid
 
 
-
     const [isLoading, setIsLoading] = useState(false)
 
     const checkOutItems = Object.values(lineItems).map(item => ({ price: item?.priceID, category: item?.category, quantity: Number(item?.Qty) }))

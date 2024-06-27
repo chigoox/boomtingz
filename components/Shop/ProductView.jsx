@@ -14,13 +14,14 @@ export const ProductView = ({ product, showProductView, setShowProductView, refD
     const name = product?.name
     const price = product?.metadata?.price
     const images = product?.images
-    const desc = product.description
-
+    const desc = product?.description
+    const category = product?.metadata?.category
 
 
     const [itemToCheckOut, setItemToCheckOut] = useState({})
+    console.log('itemsTOCHECKOUT', itemToCheckOut)
 
-    useEffect(() => { setItemToCheckOut({ priceID: product?.default_price, Qty: 0, images: images, name: name, price: price }) }, [product])
+    useEffect(() => { setItemToCheckOut({ category: category, priceID: product?.default_price, Qty: 0, images: images, name: name, price: price }) }, [product])
 
     const canAddToCart = () => {
         return (itemToCheckOut.inventory >= 1) ? true : true

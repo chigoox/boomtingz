@@ -9,6 +9,7 @@ import { siteName } from "../../constants/META";
 import { deleteDoc, doc } from "firebase/firestore";
 import { data as db } from "../../firebaseConfig";
 import * as Linking from 'expo-linking';
+import * as Network from 'expo-network';
 
 let StripeProvider;
 let useStripe;
@@ -23,9 +24,10 @@ export default function CheckoutScreen({ styles, cart, UID, setIsLoading }) {
     const { initPaymentSheet, presentPaymentSheet } = useStripe();
     const [loading, setLoading] = useState(false);
     const [cartID, setCartID] = useState()
+    const url = Linking.useURL()?.replace('exp://', '').replace('http://', '')
     const fetchPaymentSheetParams = async () => {
         try {
-            const { data } = await axios.post(`${Platform.OS != 'web' ? 'http://192.168.1.153:8081/checkout' : 'http://localhost:8081/checkout'}`,
+            const { data } = await axios.post(`${Platform.OS != 'web' ? `http://${url}/checkout` : 'http://localhost:8081/checkout'}`,
                 {
                     cart: cart,
                     location: 'mobile',

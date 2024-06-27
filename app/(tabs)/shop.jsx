@@ -1,15 +1,14 @@
-import { Box, Button, ButtonText, Center, HStack, Input, InputField, InputIcon, InputSlot, Link, SafeAreaView, ScrollView, SearchIcon, Text, VStack } from '@gluestack-ui/themed';
-import { Image, Keyboard, KeyboardAvoidingView, TextInput, View } from 'react-native';
+import { Box, Button, ButtonText, Center, HStack, Input, InputField, InputIcon, InputSlot, SafeAreaView, ScrollView, SearchIcon, Text, VStack } from '@gluestack-ui/themed';
+import { Image, Keyboard, KeyboardAvoidingView, View } from 'react-native';
 
 import { useEffect, useState } from 'react';
+import { Dimensions, Platform, TouchableWithoutFeedback } from 'react-native';
 import tw from "twrnc";
+import Logo from '../../components/Logo';
+import ProductView from '../../components/Shop/ProductView';
 import { category as CATEGORY } from '../../constants/META';
 import { filterObject } from '../../constants/Utils';
-import { Platform } from 'react-native';
-import { Dimensions } from 'react-native';
-import ProductView from '../../components/Shop/ProductView';
-import { TouchableWithoutFeedback } from 'react-native';
-import Logo from '../../components/Logo'
+import { useFetchDocsPresist } from '../../hooks/useFetchDocs'
 
 const windowDimensions = Dimensions.get('window');
 const screenDimensions = Dimensions.get('screen');
@@ -53,7 +52,7 @@ export default function Shop() {
     const getData = async () => {
       //fetch products from stripe
       try {
-        let data = await fetch('/fetchProducts',
+        let STRIPE_PRODUCTS = await fetch('/fetchProducts',
           {
             method: "POST",
             mode: "cors",
@@ -67,12 +66,22 @@ export default function Shop() {
             body: JSON.stringify('data'),
           }
         )
-        data = await data.json()
-        setPRODUCTS(Object.values(
-          filterObject(data, (v) => {
-            return (Object.keys(v.metadata).length > 0) && (v.active) && (v.images.length > 0)
+        STRIPE_PRODUCTS = await STRIPE_PRODUCTS.json()
+        let FIREBS_PRODUCTS
+
+        await useFetchDocsPresist('Products', 'active', '!=', false, 'created', (data) => {
+          FIREBS_PRODUCTS = data.map(i => {
+            const miliseconds = i.created.seconds * 1000 + i.created.nanoseconds / 1000000
+            return ({ ...i, created: miliseconds })
           })
-        ))
+          console.log('FIREBASE', FIREBS_PRODUCTS)
+          const products = [...STRIPE_PRODUCTS, ...FIREBS_PRODUCTS]
+          setPRODUCTS(Object.values(
+            filterObject(products, (v) => {
+              return (Object.keys(v.metadata).length > 0) && (v.active) && (v.images.length >= 0)
+            })
+          ))
+        })
       } catch (error) {
         console.log(error.message)
       }

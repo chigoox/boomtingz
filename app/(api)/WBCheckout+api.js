@@ -13,7 +13,7 @@ const cors = Cors({
     allowMethods: ["POST", "HEAD"],
 });
 
-const secret = 'whsec_54088d65e838c6a950fea91d163ee3b3d77328f523414be51057a80ebc1615de';
+const secret = 'whsec_2nPDTeK11uqkjDgjwm0HwRKZp9NFj2Qu';
 
 export async function POST(request) {
     try {
